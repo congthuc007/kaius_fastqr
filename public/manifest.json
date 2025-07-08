@@ -7,6 +7,7 @@
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "portrait-primary",
+  "default_icon": "/android-chrome-192x192.png",
   "scope": "/",
   "lang": "en",
   "dir": "ltr",
