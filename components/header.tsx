@@ -15,7 +15,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-3">
-          <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 p-1 shadow-sm border border-blue-200/20 dark:border-gray-700/50">
+          <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-white dark:bg-gray-900 p-0.5 shadow-sm border border-blue-200/20 dark:border-gray-700/50">
             <Image src="/logo.png" alt="Kaius Logo" fill className="object-contain drop-shadow-sm" priority />
           </div>
           <div>
