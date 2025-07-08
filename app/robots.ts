@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://kaius-fastqr.vercel.app"
+  const baseUrl = "https://fastqr.kaius.id.vn"
 
   return {
     rules: [

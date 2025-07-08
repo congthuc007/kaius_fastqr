@@ -49,14 +49,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     alternateLocale: ["vi_VN"],
-    url: "https://kaius-fastqr.vercel.app",
+    url: "https://fastqr.kaius.id.vn",
     siteName: "Kaius FastQR",
     title: "Kaius FastQR - Professional QR Code Generator",
     description:
       "Generate professional QR codes instantly with advanced customization options. Support for URL, vCard, WiFi, SMS, Email, Events and more.",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://fastqr.kaius.id.vn/og-image.png",
         width: 1200,
         height: 630,
         alt: "Kaius FastQR - Professional QR Code Generator",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     title: "Kaius FastQR - Professional QR Code Generator",
     description:
       "Generate professional QR codes instantly with advanced customization options. Free online tool with location verification.",
-    images: ["/og-image.png"],
+    images: ["https://fastqr.kaius.id.vn/og-image.png"],
   },
   verification: {
     google: "your-google-verification-code",
@@ -78,10 +78,10 @@ export const metadata: Metadata = {
     yahoo: "your-yahoo-verification-code",
   },
   alternates: {
-    canonical: "https://kaius-fastqr.vercel.app",
+    canonical: "https://fastqr.kaius.id.vn",
     languages: {
-      "en-US": "https://kaius-fastqr.vercel.app/en",
-      "vi-VN": "https://kaius-fastqr.vercel.app/vi",
+      "en-US": "https://fastqr.kaius.id.vn/en",
+      "vi-VN": "https://fastqr.kaius.id.vn/vi",
     },
   },
   category: "Technology",
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://kaius-fastqr.vercel.app"),
+  metadataBase: new URL("https://fastqr.kaius.id.vn"),
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -115,9 +115,9 @@ export const metadata: Metadata = {
   applicationName: "Kaius FastQR",
   generator: "Next.js",
   abstract: "Professional QR code generator with advanced customization and location verification features.",
-  archives: ["https://kaius-fastqr.vercel.app/archive"],
-  assets: ["https://kaius-fastqr.vercel.app/assets"],
-  bookmarks: ["https://kaius-fastqr.vercel.app/bookmarks"],
+  archives: ["https://fastqr.kaius.id.vn/archive"],
+  assets: ["https://fastqr.kaius.id.vn/assets"],
+  bookmarks: ["https://fastqr.kaius.id.vn/bookmarks"],
 }
 
 export default function RootLayout({
@@ -128,19 +128,30 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Additional SEO tags */}
-        {/* Favicon meta tags */}
+        {/* SEO & App-specific tags */}
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="msapplication-TileColor" content="#2563eb" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Kaius FastQR" />
+
+        {/* Favicon & Manifest */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
+
+        {/* Preload resources */}
+        <link rel="preload" href="/logo.png" as="image" type="image/png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 
-        {/* Structured Data */}
+        {/* Structured Data for SEO (JSON-LD) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -149,9 +160,9 @@ export default function RootLayout({
               "@type": "WebApplication",
               name: "Kaius FastQR",
               description: "Professional QR code generator with advanced customization options",
-              url: "https://kaius-fastqr.vercel.app",
+              url: "https://fastqr.kaius.id.vn",
               applicationCategory: "BusinessApplication",
-              operatingSystem: "Any",
+              operatingSystem: "All",
               permissions: "location",
               offers: {
                 "@type": "Offer",
@@ -167,7 +178,7 @@ export default function RootLayout({
                 name: "Kaius",
                 logo: {
                   "@type": "ImageObject",
-                  url: "https://kaius-fastqr.vercel.app/logo.png",
+                  url: "https://fastqr.kaius.id.vn/logo.png",
                 },
               },
               featureList: [
@@ -182,22 +193,10 @@ export default function RootLayout({
                 "Location Verification",
                 "Mobile Responsive",
               ],
-              screenshot: "https://kaius-fastqr.vercel.app/screenshot.png",
+              screenshot: "https://fastqr.kaius.id.vn/screenshot.png",
             }),
           }}
         />
-
-        {/* Additional meta tags for better SEO */}
-        <meta name="theme-color" content="#2563eb" />
-        <meta name="msapplication-TileColor" content="#2563eb" />
-        <meta name="msapplication-config" content="/browserconfig.xml" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Kaius FastQR" />
-
-        {/* Preload critical resources */}
-        <link rel="preload" href="/logo.png" as="image" type="image/png" />
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
