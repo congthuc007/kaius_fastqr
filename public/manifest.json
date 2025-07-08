@@ -7,7 +7,6 @@
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "portrait-primary",
-  "default_icon": "/android-chrome-192x192.png",
   "scope": "/",
   "lang": "en",
   "dir": "ltr",
@@ -65,8 +64,8 @@
       "url": "/?type=url",
       "icons": [
         {
-          "src": "/shortcut-url.png",
-          "sizes": "96x96",
+          "src": "/favicon-32x32.png",
+          "sizes": "32x32",
           "type": "image/png"
         }
       ]
@@ -78,8 +77,8 @@
       "url": "/?type=vcard",
       "icons": [
         {
-          "src": "/shortcut-vcard.png",
-          "sizes": "96x96",
+          "src": "/favicon-32x32.png",
+          "sizes": "32x32",
           "type": "image/png"
         }
       ]
@@ -91,8 +90,8 @@
       "url": "/?type=wifi",
       "icons": [
         {
-          "src": "/shortcut-wifi.png",
-          "sizes": "96x96",
+          "src": "/favicon-32x32.png",
+          "sizes": "32x32",
           "type": "image/png"
         }
       ]
