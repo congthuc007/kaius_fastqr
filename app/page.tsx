@@ -136,16 +136,16 @@ export default function QRGenerator() {
       (error) => {
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            setLocationError("User denied location access")
+            setLocationError(t("verify.permission_denied"))
             break
           case error.POSITION_UNAVAILABLE:
-            setLocationError("Location unavailable")
+            setLocationError(t("verify.position_unavailable"))
             break
           case error.TIMEOUT:
-            setLocationError("Location timeout")
+            setLocationError(t("verify.timeout"))
             break
           default:
-            setLocationError("Unknown location error")
+            setLocationError(t("verify.unknown_error"))
             break
         }
       },
@@ -165,9 +165,9 @@ export default function QRGenerator() {
   }, [requireLocation])
 
   useEffect(() => {
-    const validation = validateQRColors(customization.foregroundColor, customization.backgroundColor)
+    const validation = validateQRColors(customization.foregroundColor, customization.backgroundColor, t)
     setColorValidation(validation)
-  }, [customization.foregroundColor, customization.backgroundColor])
+  }, [customization.foregroundColor, customization.backgroundColor, t])
 
   // Tạo nội dung QR dựa trên loại
   const generateQRContent = (): string => {
@@ -274,7 +274,7 @@ END:VCALENDAR`
     }
 
     if (!colorValidation.isValid) {
-      setError("Không thể tạo QR code với màu sắc hiện tại. Vui lòng chọn màu khác.")
+      setError(t("msg.invalid_colors"))
       return
     }
 
@@ -319,7 +319,7 @@ END:VCALENDAR`
 
       setQrCodeUrl(qrCodeDataUrl)
     } catch (err) {
-      setError("Cannot generate QR code. Please try again.")
+      setError(t("msg.generation_error"))
     } finally {
       setIsLoading(false)
     }
@@ -449,7 +449,7 @@ END:VCALENDAR`
                           <Input
                             id="url"
                             type="url"
-                            placeholder="https://example.com"
+                            placeholder={t("placeholder.url")}
                             value={urlData}
                             onChange={(e) => setUrlData(e.target.value)}
                             className="mt-1"
@@ -462,7 +462,7 @@ END:VCALENDAR`
                           <Label htmlFor="text">{t("form.text_content")} *</Label>
                           <Textarea
                             id="text"
-                            placeholder={t("form.text_content")}
+                            placeholder={t("placeholder.text")}
                             value={textData}
                             onChange={(e) => setTextData(e.target.value)}
                             rows={4}
@@ -477,27 +477,27 @@ END:VCALENDAR`
                           <Input
                             id="email"
                             type="email"
-                            placeholder="example@email.com"
+                            placeholder={t("placeholder.email")}
                             value={emailData.email}
                             onChange={(e) => setEmailData({ ...emailData, email: e.target.value })}
                             className="mt-1"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="email-subject">Subject</Label>
+                          <Label htmlFor="email-subject">{t("form.email")} Subject</Label>
                           <Input
                             id="email-subject"
-                            placeholder="Email subject"
+                            placeholder={t("placeholder.email_subject")}
                             value={emailData.subject}
                             onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
                             className="mt-1"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="email-body">Body</Label>
+                          <Label htmlFor="email-body">{t("form.email")} Body</Label>
                           <Textarea
                             id="email-body"
-                            placeholder="Email body"
+                            placeholder={t("placeholder.email_body")}
                             value={emailData.body}
                             onChange={(e) => setEmailData({ ...emailData, body: e.target.value })}
                             rows={3}
@@ -512,7 +512,7 @@ END:VCALENDAR`
                           <Input
                             id="phone"
                             type="tel"
-                            placeholder="+1 234 567 890"
+                            placeholder={t("placeholder.phone")}
                             value={phoneData}
                             onChange={(e) => setPhoneData(e.target.value)}
                             className="mt-1"
@@ -526,7 +526,7 @@ END:VCALENDAR`
                             <Label htmlFor="vcard-name">{t("form.name")} *</Label>
                             <Input
                               id="vcard-name"
-                              placeholder="John Doe"
+                              placeholder={t("placeholder.name")}
                               value={vcardData.name}
                               onChange={(e) => setVcardData({ ...vcardData, name: e.target.value })}
                               className="mt-1"
@@ -537,7 +537,7 @@ END:VCALENDAR`
                             <Input
                               id="vcard-phone"
                               type="tel"
-                              placeholder="+1 234 567 890"
+                              placeholder={t("placeholder.phone")}
                               value={vcardData.phone}
                               onChange={(e) => setVcardData({ ...vcardData, phone: e.target.value })}
                               className="mt-1"
@@ -548,7 +548,7 @@ END:VCALENDAR`
                             <Input
                               id="vcard-email"
                               type="email"
-                              placeholder="john@example.com"
+                              placeholder={t("placeholder.email")}
                               value={vcardData.email}
                               onChange={(e) => setVcardData({ ...vcardData, email: e.target.value })}
                               className="mt-1"
@@ -558,7 +558,7 @@ END:VCALENDAR`
                             <Label htmlFor="vcard-org">{t("form.organization")}</Label>
                             <Input
                               id="vcard-org"
-                              placeholder="Company Name"
+                              placeholder={t("placeholder.company")}
                               value={vcardData.organization}
                               onChange={(e) => setVcardData({ ...vcardData, organization: e.target.value })}
                               className="mt-1"
@@ -569,7 +569,7 @@ END:VCALENDAR`
                           <Label htmlFor="vcard-address">{t("form.address")}</Label>
                           <Input
                             id="vcard-address"
-                            placeholder="123 Main St, City, Country"
+                            placeholder={t("placeholder.address")}
                             value={vcardData.address}
                             onChange={(e) => setVcardData({ ...vcardData, address: e.target.value })}
                             className="mt-1"
@@ -580,7 +580,7 @@ END:VCALENDAR`
                           <Input
                             id="vcard-website"
                             type="url"
-                            placeholder="https://website.com"
+                            placeholder={t("placeholder.website")}
                             value={vcardData.website}
                             onChange={(e) => setVcardData({ ...vcardData, website: e.target.value })}
                             className="mt-1"
@@ -590,7 +590,7 @@ END:VCALENDAR`
                           <Label htmlFor="vcard-note">{t("form.note")}</Label>
                           <Textarea
                             id="vcard-note"
-                            placeholder={t("form.note")}
+                            placeholder={t("placeholder.note")}
                             value={vcardData.note}
                             onChange={(e) => setVcardData({ ...vcardData, note: e.target.value })}
                             rows={2}
@@ -605,7 +605,7 @@ END:VCALENDAR`
                           <Input
                             id="sms-phone"
                             type="tel"
-                            placeholder="+1 234 567 890"
+                            placeholder={t("placeholder.phone")}
                             value={smsData.phone}
                             onChange={(e) => setSmsData({ ...smsData, phone: e.target.value })}
                             className="mt-1"
@@ -615,7 +615,7 @@ END:VCALENDAR`
                           <Label htmlFor="sms-message">{t("form.message")}</Label>
                           <Textarea
                             id="sms-message"
-                            placeholder="Message content..."
+                            placeholder={t("placeholder.message")}
                             value={smsData.message}
                             onChange={(e) => setSmsData({ ...smsData, message: e.target.value })}
                             rows={3}
@@ -629,7 +629,7 @@ END:VCALENDAR`
                           <Label htmlFor="event-title">{t("form.event_title")} *</Label>
                           <Input
                             id="event-title"
-                            placeholder="Event Name"
+                            placeholder={t("placeholder.event_name")}
                             value={eventData.title}
                             onChange={(e) => setEventData({ ...eventData, title: e.target.value })}
                             className="mt-1"
@@ -639,7 +639,7 @@ END:VCALENDAR`
                           <Label htmlFor="event-location">{t("form.event_location")}</Label>
                           <Input
                             id="event-location"
-                            placeholder="Event Location"
+                            placeholder={t("placeholder.event_location")}
                             value={eventData.location}
                             onChange={(e) => setEventData({ ...eventData, location: e.target.value })}
                             className="mt-1"
@@ -672,7 +672,7 @@ END:VCALENDAR`
                           <Input
                             id="event-url"
                             type="url"
-                            placeholder="https://event-link.com"
+                            placeholder={t("placeholder.event_url")}
                             value={eventData.url}
                             onChange={(e) => setEventData({ ...eventData, url: e.target.value })}
                             className="mt-1"
@@ -682,7 +682,7 @@ END:VCALENDAR`
                           <Label htmlFor="event-desc">{t("form.description")}</Label>
                           <Textarea
                             id="event-desc"
-                            placeholder={t("form.description")}
+                            placeholder={t("placeholder.event_description")}
                             value={eventData.description}
                             onChange={(e) => setEventData({ ...eventData, description: e.target.value })}
                             rows={3}
@@ -696,7 +696,7 @@ END:VCALENDAR`
                           <Label htmlFor="ssid">{t("form.wifi_name")} *</Label>
                           <Input
                             id="ssid"
-                            placeholder="WiFi Network Name"
+                            placeholder={t("placeholder.wifi_name")}
                             value={wifiData.ssid}
                             onChange={(e) => setWifiData({ ...wifiData, ssid: e.target.value })}
                             className="mt-1"
@@ -707,7 +707,7 @@ END:VCALENDAR`
                           <Input
                             id="wifi-password"
                             type="password"
-                            placeholder="WiFi Password"
+                            placeholder={t("placeholder.wifi_password")}
                             value={wifiData.password}
                             onChange={(e) => setWifiData({ ...wifiData, password: e.target.value })}
                             className="mt-1"
@@ -724,9 +724,9 @@ END:VCALENDAR`
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="WPA">WPA/WPA2</SelectItem>
-                                <SelectItem value="WEP">WEP</SelectItem>
-                                <SelectItem value="nopass">No Password</SelectItem>
+                                <SelectItem value="WPA">{t("wifi.wpa")}</SelectItem>
+                                <SelectItem value="WEP">{t("wifi.wep")}</SelectItem>
+                                <SelectItem value="nopass">{t("wifi.no_password")}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -746,7 +746,7 @@ END:VCALENDAR`
                           <Label htmlFor="location-label">{t("form.place_name")} *</Label>
                           <Input
                             id="location-label"
-                            placeholder="Place Name"
+                            placeholder={t("placeholder.place_name")}
                             value={locationData.label}
                             onChange={(e) => setLocationData({ ...locationData, label: e.target.value })}
                             className="mt-1"
@@ -759,7 +759,7 @@ END:VCALENDAR`
                               id="latitude"
                               type="number"
                               step="any"
-                              placeholder="10.7769"
+                              placeholder={t("placeholder.latitude")}
                               value={locationData.latitude}
                               onChange={(e) => setLocationData({ ...locationData, latitude: e.target.value })}
                               className="mt-1"
@@ -771,7 +771,7 @@ END:VCALENDAR`
                               id="longitude"
                               type="number"
                               step="any"
-                              placeholder="106.7009"
+                              placeholder={t("placeholder.longitude")}
                               value={locationData.longitude}
                               onChange={(e) => setLocationData({ ...locationData, longitude: e.target.value })}
                               className="mt-1"
@@ -805,7 +805,7 @@ END:VCALENDAR`
                           <Input
                             id="facebook"
                             type="url"
-                            placeholder="https://facebook.com/username"
+                            placeholder={t("placeholder.facebook")}
                             value={facebookData}
                             onChange={(e) => setFacebookData(e.target.value)}
                             className="mt-1"
@@ -816,7 +816,7 @@ END:VCALENDAR`
                   </Tabs>
                 </div>
 
-                {/* QR Customization - Enhanced */}
+                {/* QR Customization */}
                 <div className="space-y-4 border-t pt-6">
                   <div className="flex items-center gap-2">
                     <Palette className="h-5 w-5" />
@@ -844,7 +844,7 @@ END:VCALENDAR`
                               })
                             }}
                           >
-                            Sửa tự động
+                            {t("btn.auto_fix")}
                           </Button>
                         )}
                       </AlertDescription>
@@ -891,47 +891,6 @@ END:VCALENDAR`
                       </div>
                     </div>
 
-                    {/* Dot Style */}
-                    {/* <div>
-                      <Label htmlFor="dot-style">Kiểu chấm QR</Label>
-                      <Select
-                        value={customization.dotStyle}
-                        onValueChange={(value: "square" | "rounded" | "circle" | "diamond") =>
-                          setCustomization({ ...customization, dotStyle: value })
-                        }
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="square">Vuông</SelectItem>
-                          <SelectItem value="rounded">Bo góc</SelectItem>
-                          <SelectItem value="circle">Tròn</SelectItem>
-                          <SelectItem value="diamond">Kim cương</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div> */}
-
-                    {/* Corner Style */}
-                    {/* <div>
-                      <Label htmlFor="corner-style">Kiểu góc định vị</Label>
-                      <Select
-                        value={customization.cornerStyle}
-                        onValueChange={(value: "square" | "rounded" | "circle") =>
-                          setCustomization({ ...customization, cornerStyle: value })
-                        }
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="square">Vuông</SelectItem>
-                          <SelectItem value="rounded">Bo góc</SelectItem>
-                          <SelectItem value="circle">Tròn</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div> */}
-
                     {/* Size and Margin */}
                     <div>
                       <Label htmlFor="size">
@@ -975,10 +934,10 @@ END:VCALENDAR`
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="L">Low (7%)</SelectItem>
-                          <SelectItem value="M">Medium (15%)</SelectItem>
-                          <SelectItem value="Q">Quartile (25%)</SelectItem>
-                          <SelectItem value="H">High (30%)</SelectItem>
+                          <SelectItem value="L">{t("error.low")}</SelectItem>
+                          <SelectItem value="M">{t("error.medium")}</SelectItem>
+                          <SelectItem value="Q">{t("error.quartile")}</SelectItem>
+                          <SelectItem value="H">{t("error.high")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -986,15 +945,15 @@ END:VCALENDAR`
 
                   {/* Color Presets */}
                   <div>
-                    <Label className="text-sm font-medium">Bộ màu có sẵn</Label>
+                    <Label className="text-sm font-medium">{t("custom.color_presets")}</Label>
                     <div className="flex gap-2 mt-2 flex-wrap">
                       {[
-                        { name: "Đen trắng", fg: "#000000", bg: "#FFFFFF" },
-                        { name: "Xanh trắng", fg: "#1d4ed8", bg: "#FFFFFF" },
-                        { name: "Trắng đen", fg: "#FFFFFF", bg: "#000000" },
-                        { name: "Cam đen", fg: "#f97316", bg: "#000000" },
-                        { name: "Tím trắng", fg: "#7c3aed", bg: "#FFFFFF" },
-                        { name: "Xanh lá", fg: "#16a34a", bg: "#FFFFFF" },
+                        { name: t("preset.black_white"), fg: "#000000", bg: "#FFFFFF" },
+                        { name: t("preset.blue_white"), fg: "#1d4ed8", bg: "#FFFFFF" },
+                        { name: t("preset.white_black"), fg: "#FFFFFF", bg: "#000000" },
+                        { name: t("preset.orange_black"), fg: "#f97316", bg: "#000000" },
+                        { name: t("preset.purple_white"), fg: "#7c3aed", bg: "#FFFFFF" },
+                        { name: t("preset.green_white"), fg: "#16a34a", bg: "#FFFFFF" },
                       ].map((preset) => (
                         <Button
                           key={preset.name}
@@ -1151,8 +1110,8 @@ END:VCALENDAR`
                 {requireLocation && (
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    <span className="font-medium">Location:</span>
-                    <span className="text-green-600">Required</span>
+                    <span className="font-medium">{t("qr_info.location_required")}:</span>
+                    <span className="text-green-600">{t("qr_info.location_required")}</span>
                   </div>
                 )}
                 <div className="text-sm text-muted-foreground">

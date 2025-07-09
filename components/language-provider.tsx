@@ -65,10 +65,34 @@ const translations = {
     "custom.size": "Size",
     "custom.margin": "Margin",
     "custom.error_level": "Error Correction",
-    "custom.style": "Style",
-    "custom.style_square": "Square",
-    "custom.style_dots": "Dots",
-    "custom.style_rounded": "Rounded",
+    "custom.dot_style": "Dot Style",
+    "custom.corner_style": "Corner Style",
+    "custom.color_presets": "Color Presets",
+
+    // Dot Styles
+    "dot.square": "Square",
+    "dot.rounded": "Rounded",
+    "dot.circle": "Circle",
+    "dot.diamond": "Diamond",
+
+    // Corner Styles
+    "corner.square": "Square",
+    "corner.rounded": "Rounded",
+    "corner.circle": "Circle",
+
+    // Error Levels
+    "error.low": "Low (7%)",
+    "error.medium": "Medium (15%)",
+    "error.quartile": "Quartile (25%)",
+    "error.high": "High (30%)",
+
+    // Color Presets
+    "preset.black_white": "Black & White",
+    "preset.blue_white": "Blue & White",
+    "preset.white_black": "White & Black",
+    "preset.orange_black": "Orange & Black",
+    "preset.purple_white": "Purple & White",
+    "preset.green_white": "Green & White",
 
     // Location
     "location.require_verification": "Require Location Verification",
@@ -77,6 +101,7 @@ const translations = {
     "location.getting_location": "Getting location...",
     "location.get_location_again": "Get Location Again",
     "location.use_current": "Use Current Location",
+    "location.allow_access": "Allow Location Access",
 
     // Buttons
     "btn.generate_qr": "Generate QR Code",
@@ -84,11 +109,20 @@ const translations = {
     "btn.download_qr": "Download QR",
     "btn.create_new": "Create New QR",
     "btn.reset": "Reset",
+    "btn.auto_fix": "Auto Fix",
 
     // Messages
     "msg.fill_required": "Please fill in all required information",
     "msg.allow_location_access": "Please allow location access",
     "msg.qr_generated": "QR code generated successfully",
+    "msg.invalid_colors": "Cannot generate QR code with current colors. Please choose different colors.",
+    "msg.generation_error": "Cannot generate QR code. Please try again.",
+
+    // Validation Messages
+    "validation.contrast_too_low":
+      "Contrast too low! QR code may not be scannable. Minimum contrast ratio of 3:1 recommended",
+    "validation.contrast_low": "Low contrast. QR code may be difficult to scan in low light conditions.",
+    "validation.colors_too_similar": "Colors too similar! QR code will not be scannable.",
 
     // Guide
     "guide.title": "How to Use",
@@ -103,6 +137,103 @@ const translations = {
     "qr_info.created_at": "Created at",
     "qr_info.preview": "QR Code Preview",
     "qr_info.no_qr": "No QR code generated yet",
+    "qr_info.location_required": "Location Required",
+
+    // Verify Page
+    "verify.title": "Location Verification",
+    "verify.access_content": "Access Content",
+    "verify.please_verify": "Please verify your location to continue",
+    "verify.click_to_access": "Click the button below to access content",
+    "verify.qr_info": "QR Code Information",
+    "verify.location_verification": "Location Verification",
+    "verify.your_location_needs": "Your location needs to be verified",
+    "verify.required_location": "Required Location",
+    "verify.allowed_range": "Allowed Range",
+    "verify.within_meters": "Within {distance} meters",
+    "verify.determining_location": "Determining your location...",
+    "verify.current_location": "Current Location",
+    "verify.accuracy": "Accuracy",
+    "verify.distance": "Distance",
+    "verify.meters_from_required": "{distance} meters from required location",
+    "verify.verification_success": "Location verification successful! You can access the content.",
+    "verify.allow_location": "Allow Location Access",
+    "verify.try_again": "Try Again",
+    "verify.access_content_btn": "Access Content",
+    "verify.invalid_qr": "Invalid QR Code",
+    "verify.invalid_qr_desc":
+      "This QR code does not contain valid information. Please use a QR code generated from the system.",
+    "verify.distance_too_far":
+      "You are {distance}m away from the required location. Please get closer (within {allowed}m range)",
+    "verify.permission_denied": "You need to allow location access",
+    "verify.position_unavailable": "Cannot determine current location",
+    "verify.timeout": "Location timeout",
+    "verify.unknown_error": "Unknown error when getting location",
+    "verify.content_copied": "Content copied to clipboard!",
+    "verify.wifi_info": "WiFi Information:",
+    "verify.coupon_code": "Coupon Code: {code}",
+    "verify.discount": "Discount: {discount}",
+    "verify.unsupported_qr": "Unsupported QR type",
+    "verify.browser_not_supported": "Browser doesn't support geolocation",
+    "verify.location_services": "Location Services",
+    "verify.enable_location": "Please enable location services in your browser settings",
+    "verify.need_assistance": "Need assistance?",
+    "verify.having_trouble": "Having trouble?",
+    "verify.security_info": "Security Information",
+    "verify.encrypted_data": "Encrypted QR Data",
+    "verify.encrypted_desc": "All QR information is securely encoded",
+    "verify.location_verified_locally": "Your location is verified locally",
+    "verify.no_data_storage": "No Data Storage",
+    "verify.no_storage_desc": "We don't store your personal information",
+    "verify.qr_details": "QR Details",
+    "verify.security_level": "Security Level",
+    "verify.security_high": "High",
+    "verify.security_standard": "Standard",
+    "verify.loading_verification": "Loading verification...",
+    "verify.open_content": "Open {type}",
+
+    // Form Placeholders
+    "placeholder.url": "https://example.com",
+    "placeholder.text": "Enter your text content here...",
+    "placeholder.email": "example@email.com",
+    "placeholder.email_subject": "Email subject",
+    "placeholder.email_body": "Email body",
+    "placeholder.phone": "+1 234 567 890",
+    "placeholder.name": "John Doe",
+    "placeholder.company": "Company Name",
+    "placeholder.address": "123 Main St, City, Country",
+    "placeholder.website": "https://website.com",
+    "placeholder.note": "Additional notes...",
+    "placeholder.message": "Message content...",
+    "placeholder.event_name": "Event Name",
+    "placeholder.event_location": "Event Location",
+    "placeholder.event_url": "https://event-link.com",
+    "placeholder.event_description": "Event description...",
+    "placeholder.wifi_name": "WiFi Network Name",
+    "placeholder.wifi_password": "WiFi Password",
+    "placeholder.place_name": "Place Name",
+    "placeholder.latitude": "10.7769",
+    "placeholder.longitude": "106.7009",
+    "placeholder.facebook": "https://facebook.com/username",
+
+    // WiFi Security
+    "wifi.wpa": "WPA/WPA2",
+    "wifi.wep": "WEP",
+    "wifi.no_password": "No Password",
+
+    // Time
+    "time.created_at": "Created at",
+    "time.now": "now",
+
+    // Navigation
+    "nav.home": "Home",
+    "nav.about": "About",
+    "nav.contact": "Contact",
+    "nav.help": "Help",
+
+    // Footer (if needed)
+    "footer.copyright": "© 2024 Kaius FastQR. All rights reserved.",
+    "footer.privacy": "Privacy Policy",
+    "footer.terms": "Terms of Service",
   },
   vi: {
     // Header
@@ -150,15 +281,39 @@ const translations = {
 
     // Customization
     "custom.title": "Tùy chỉnh QR Code",
-    "custom.foreground": "Màu chữ",
+    "custom.foreground": "Màu chấm",
     "custom.background": "Màu nền",
     "custom.size": "Kích thước",
     "custom.margin": "Lề",
     "custom.error_level": "Mức sửa lỗi",
-    "custom.style": "Kiểu dáng",
-    "custom.style_square": "Vuông",
-    "custom.style_dots": "Chấm tròn",
-    "custom.style_rounded": "Bo góc",
+    "custom.dot_style": "Kiểu chấm QR",
+    "custom.corner_style": "Kiểu góc định vị",
+    "custom.color_presets": "Bộ màu có sẵn",
+
+    // Dot Styles
+    "dot.square": "Vuông",
+    "dot.rounded": "Bo góc",
+    "dot.circle": "Tròn",
+    "dot.diamond": "Kim cương",
+
+    // Corner Styles
+    "corner.square": "Vuông",
+    "corner.rounded": "Bo góc",
+    "corner.circle": "Tròn",
+
+    // Error Levels
+    "error.low": "Thấp (7%)",
+    "error.medium": "Trung bình (15%)",
+    "error.quartile": "Cao (25%)",
+    "error.high": "Rất cao (30%)",
+
+    // Color Presets
+    "preset.black_white": "Đen trắng",
+    "preset.blue_white": "Xanh trắng",
+    "preset.white_black": "Trắng đen",
+    "preset.orange_black": "Cam đen",
+    "preset.purple_white": "Tím trắng",
+    "preset.green_white": "Xanh lá",
 
     // Location
     "location.require_verification": "Yêu cầu xác thực vị trí",
@@ -167,6 +322,7 @@ const translations = {
     "location.getting_location": "Đang lấy vị trí...",
     "location.get_location_again": "Lấy vị trí lại",
     "location.use_current": "Sử dụng vị trí hiện tại",
+    "location.allow_access": "Cho phép truy cập vị trí",
 
     // Buttons
     "btn.generate_qr": "Tạo QR Code",
@@ -174,11 +330,20 @@ const translations = {
     "btn.download_qr": "Tải xuống QR",
     "btn.create_new": "Tạo QR mới",
     "btn.reset": "Đặt lại",
+    "btn.auto_fix": "Sửa tự động",
 
     // Messages
     "msg.fill_required": "Vui lòng điền đầy đủ thông tin bắt buộc",
     "msg.allow_location_access": "Vui lòng cho phép truy cập vị trí",
     "msg.qr_generated": "Tạo QR code thành công",
+    "msg.invalid_colors": "Không thể tạo QR code với màu sắc hiện tại. Vui lòng chọn màu khác.",
+    "msg.generation_error": "Không thể tạo QR code. Vui lòng thử lại.",
+
+    // Validation Messages
+    "validation.contrast_too_low":
+      "Độ tương phản quá thấp! QR code có thể không quét được. Khuyến nghị tỷ lệ tương phản tối thiểu 3:1",
+    "validation.contrast_low": "Độ tương phản thấp. QR code có thể khó quét trong điều kiện ánh sáng yếu.",
+    "validation.colors_too_similar": "Màu sắc quá giống nhau! QR code sẽ không thể quét được.",
 
     // Guide
     "guide.title": "Hướng dẫn sử dụng",
@@ -193,6 +358,102 @@ const translations = {
     "qr_info.created_at": "Thời gian tạo",
     "qr_info.preview": "Xem trước QR Code",
     "qr_info.no_qr": "Chưa tạo QR code nào",
+    "qr_info.location_required": "Yêu cầu vị trí",
+
+    // Verify Page
+    "verify.title": "Xác thực vị trí",
+    "verify.access_content": "Truy cập nội dung",
+    "verify.please_verify": "Vui lòng xác thực vị trí để tiếp tục",
+    "verify.click_to_access": "Nhấn nút bên dưới để truy cập nội dung",
+    "verify.qr_info": "Thông tin QR Code",
+    "verify.location_verification": "Xác thực vị trí",
+    "verify.your_location_needs": "Vị trí của bạn cần được xác thực",
+    "verify.required_location": "Vị trí yêu cầu",
+    "verify.allowed_range": "Phạm vi cho phép",
+    "verify.within_meters": "Trong vòng {distance} mét",
+    "verify.determining_location": "Đang xác định vị trí của bạn...",
+    "verify.current_location": "Vị trí hiện tại",
+    "verify.accuracy": "Độ chính xác",
+    "verify.distance": "Khoảng cách",
+    "verify.meters_from_required": "{distance} mét từ vị trí yêu cầu",
+    "verify.verification_success": "Xác thực vị trí thành công! Bạn có thể truy cập nội dung.",
+    "verify.allow_location": "Cho phép truy cập vị trí",
+    "verify.try_again": "Thử lại",
+    "verify.access_content_btn": "Truy cập nội dung",
+    "verify.invalid_qr": "QR Code không hợp lệ",
+    "verify.invalid_qr_desc": "QR code này không chứa thông tin hợp lệ. Vui lòng sử dụng QR code được tạo từ hệ thống.",
+    "verify.distance_too_far":
+      "Bạn cách xa vị trí yêu cầu {distance}m. Vui lòng đến gần hơn (trong phạm vi {allowed}m)",
+    "verify.permission_denied": "Bạn cần cho phép truy cập vị trí",
+    "verify.position_unavailable": "Không thể xác định vị trí hiện tại",
+    "verify.timeout": "Hết thời gian chờ định vị",
+    "verify.unknown_error": "Lỗi không xác định khi lấy vị trí",
+    "verify.content_copied": "Đã copy nội dung vào clipboard!",
+    "verify.wifi_info": "Thông tin WiFi:",
+    "verify.coupon_code": "Mã giảm giá: {code}",
+    "verify.discount": "Giảm: {discount}",
+    "verify.unsupported_qr": "Loại QR không được hỗ trợ",
+    "verify.browser_not_supported": "Trình duyệt không hỗ trợ định vị",
+    "verify.location_services": "Dịch vụ định vị",
+    "verify.enable_location": "Vui lòng bật dịch vụ định vị trong cài đặt trình duyệt",
+    "verify.need_assistance": "Cần hỗ trợ?",
+    "verify.having_trouble": "Gặp khó khăn?",
+    "verify.security_info": "Thông tin bảo mật",
+    "verify.encrypted_data": "Dữ liệu QR được mã hóa",
+    "verify.encrypted_desc": "Tất cả thông tin QR được mã hóa an toàn",
+    "verify.location_verified_locally": "Vị trí của bạn được xác thực cục bộ",
+    "verify.no_data_storage": "Không lưu trữ dữ liệu",
+    "verify.no_storage_desc": "Chúng tôi không lưu trữ thông tin cá nhân của bạn",
+    "verify.qr_details": "Chi tiết QR",
+    "verify.security_level": "Mức bảo mật",
+    "verify.security_high": "Cao",
+    "verify.security_standard": "Tiêu chuẩn",
+    "verify.loading_verification": "Đang tải xác thực...",
+    "verify.open_content": "Mở {type}",
+
+    // Form Placeholders
+    "placeholder.url": "https://example.com",
+    "placeholder.text": "Nhập nội dung văn bản của bạn...",
+    "placeholder.email": "example@email.com",
+    "placeholder.email_subject": "Tiêu đề email",
+    "placeholder.email_body": "Nội dung email",
+    "placeholder.phone": "+84 123 456 789",
+    "placeholder.name": "Nguyễn Văn A",
+    "placeholder.company": "Tên công ty",
+    "placeholder.address": "123 Đường ABC, Quận XYZ, TP.HCM",
+    "placeholder.website": "https://website.com",
+    "placeholder.note": "Ghi chú thêm...",
+    "placeholder.message": "Nội dung tin nhắn...",
+    "placeholder.event_name": "Tên sự kiện",
+    "placeholder.event_location": "Địa điểm sự kiện",
+    "placeholder.event_url": "https://link-su-kien.com",
+    "placeholder.event_description": "Mô tả sự kiện...",
+    "placeholder.wifi_name": "Tên mạng WiFi",
+    "placeholder.wifi_password": "Mật khẩu WiFi",
+    "placeholder.place_name": "Tên địa điểm",
+    "placeholder.latitude": "10.7769",
+    "placeholder.longitude": "106.7009",
+    "placeholder.facebook": "https://facebook.com/username",
+
+    // WiFi Security
+    "wifi.wpa": "WPA/WPA2",
+    "wifi.wep": "WEP",
+    "wifi.no_password": "Không mật khẩu",
+
+    // Time
+    "time.created_at": "Tạo lúc",
+    "time.now": "bây giờ",
+
+    // Navigation
+    "nav.home": "Trang chủ",
+    "nav.about": "Giới thiệu",
+    "nav.contact": "Liên hệ",
+    "nav.help": "Trợ giúp",
+
+    // Footer (if needed)
+    "footer.copyright": "© 2024 Kaius FastQR. Tất cả quyền được bảo lưu.",
+    "footer.privacy": "Chính sách bảo mật",
+    "footer.terms": "Điều khoản dịch vụ",
   },
 }
 
@@ -211,8 +472,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("language", lang)
   }
 
-  const t = (key: string): string => {
-    return translations[language][key as keyof (typeof translations)[typeof language]] || key
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    let translation = translations[language][key as keyof (typeof translations)[typeof language]] || key
+
+    // Handle parameter substitution
+    if (params) {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        translation = translation.replace(`{${paramKey}}`, String(paramValue))
+      })
+    }
+
+    return translation
   }
 
   return (

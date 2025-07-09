@@ -36,6 +36,7 @@ export function getContrastRatio(color1: string, color2: string): number {
 export function validateQRColors(
   foreground: string,
   background: string,
+  t: (key: string) => string,
 ): {
   isValid: boolean
   warning: string | null
@@ -47,7 +48,7 @@ export function validateQRColors(
   if (contrastRatio < 3) {
     return {
       isValid: false,
-      warning: "Độ tương phản quá thấp! QR code có thể không quét được. Khuyến nghị tỷ lệ tương phản tối thiểu 3:1",
+      warning: t("validation.contrast_too_low"),
       severity: "error",
     }
   }
@@ -55,7 +56,7 @@ export function validateQRColors(
   if (contrastRatio < 4.5) {
     return {
       isValid: true,
-      warning: "Độ tương phản thấp. QR code có thể khó quét trong điều kiện ánh sáng yếu.",
+      warning: t("validation.contrast_low"),
       severity: "warning",
     }
   }
@@ -70,7 +71,7 @@ export function validateQRColors(
     if (colorDistance < 100) {
       return {
         isValid: false,
-        warning: "Màu sắc quá giống nhau! QR code sẽ không thể quét được.",
+        warning: t("validation.colors_too_similar"),
         severity: "error",
       }
     }
