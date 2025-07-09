@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     "online QR generator",
     "mobile QR scanner",
   ],
-  authors: [{ name: "Kaius", url: "https://kaius.dev" }],
+  authors: [{ name: "Kaius", url: "https://github.com/congthuc007" }],
   creator: "Kaius",
   publisher: "Kaius",
   robots: {
