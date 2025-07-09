@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "Kaius FastQR - Professional QR Code Generator",
   "short_name": "Kaius FastQR",
   "description": "Generate professional QR codes with advanced customization and location verification",
@@ -45,15 +46,13 @@
       "src": "/screenshot-desktop.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Kaius FastQR Desktop View"
+      "platform": "chrome_os"
     },
     {
       "src": "/screenshot-mobile.png",
       "sizes": "390x844",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Kaius FastQR Mobile View"
+      "platform": "android"
     }
   ],
   "shortcuts": [
