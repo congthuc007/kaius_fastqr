@@ -892,7 +892,7 @@ END:VCALENDAR`
                     </div>
 
                     {/* Dot Style */}
-                    <div>
+                    {/* <div>
                       <Label htmlFor="dot-style">Kiểu chấm QR</Label>
                       <Select
                         value={customization.dotStyle}
@@ -910,10 +910,10 @@ END:VCALENDAR`
                           <SelectItem value="diamond">Kim cương</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                    </div> */}
 
                     {/* Corner Style */}
-                    <div>
+                    {/* <div>
                       <Label htmlFor="corner-style">Kiểu góc định vị</Label>
                       <Select
                         value={customization.cornerStyle}
@@ -930,7 +930,7 @@ END:VCALENDAR`
                           <SelectItem value="circle">Tròn</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                    </div> */}
 
                     {/* Size and Margin */}
                     <div>
