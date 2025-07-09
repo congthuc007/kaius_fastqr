@@ -1,5 +1,5 @@
 # Robots.txt for Kaius FastQR
-# https://kaius-fastqr.vercel.app/robots.txt
+# https://fastqr.kaius.id.vn/robots.txt
 
 User-agent: *
 Allow: /
@@ -48,8 +48,8 @@ Allow: /manifest.json
 Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://kaius-fastqr.vercel.app/sitemap.xml
-Sitemap: https://kaius-fastqr.vercel.app/sitemap-images.xml
+Sitemap: https://fastqr.kaius.id.vn/sitemap.xml
+Sitemap: https://fastqr.kaius.id.vn/sitemap-images.xml
 
 # Host directive (optional, for some search engines)
-Host: https://kaius-fastqr.vercel.app
+Host: https://fastqr.kaius.id.vn

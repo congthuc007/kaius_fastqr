@@ -35,6 +35,7 @@ import {
 } from "lucide-react"
 import QRCodeLib from "qrcode"
 import Image from "next/image"
+import { validateQRColors, suggestBetterColors } from "@/utils/color-validation"
 
 interface LocationData {
   latitude: number
@@ -59,7 +60,8 @@ interface QRCustomization {
   size: number
   margin: number
   errorCorrectionLevel: "L" | "M" | "Q" | "H"
-  style: "square" | "dots" | "rounded"
+  dotStyle: "square" | "rounded" | "circle" | "diamond"
+  cornerStyle: "square" | "rounded" | "circle"
 }
 
 export default function QRGenerator() {
@@ -71,6 +73,11 @@ export default function QRGenerator() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [locationError, setLocationError] = useState("")
+  const [colorValidation, setColorValidation] = useState<{
+    isValid: boolean
+    warning: string | null
+    severity: "error" | "warning" | null
+  }>({ isValid: true, warning: null, severity: null })
 
   // QR Customization
   const [customization, setCustomization] = useState<QRCustomization>({
@@ -79,7 +86,8 @@ export default function QRGenerator() {
     size: 300,
     margin: 2,
     errorCorrectionLevel: "M",
-    style: "square",
+    dotStyle: "square",
+    cornerStyle: "square",
   })
 
   // Form data cho các loại QR khác nhau
@@ -155,6 +163,11 @@ export default function QRGenerator() {
       getCurrentLocation()
     }
   }, [requireLocation])
+
+  useEffect(() => {
+    const validation = validateQRColors(customization.foregroundColor, customization.backgroundColor)
+    setColorValidation(validation)
+  }, [customization.foregroundColor, customization.backgroundColor])
 
   // Tạo nội dung QR dựa trên loại
   const generateQRContent = (): string => {
@@ -257,6 +270,11 @@ END:VCALENDAR`
   const generateQRCode = async () => {
     if (!validateData()) {
       setError(t("msg.fill_required"))
+      return
+    }
+
+    if (!colorValidation.isValid) {
+      setError("Không thể tạo QR code với màu sắc hiện tại. Vui lòng chọn màu khác.")
       return
     }
 
@@ -798,14 +816,43 @@ END:VCALENDAR`
                   </Tabs>
                 </div>
 
-                {/* QR Customization */}
+                {/* QR Customization - Enhanced */}
                 <div className="space-y-4 border-t pt-6">
                   <div className="flex items-center gap-2">
                     <Palette className="h-5 w-5" />
                     <Label className="text-base font-medium">{t("custom.title")}</Label>
                   </div>
 
+                  {/* Color Validation Alert */}
+                  {colorValidation.warning && (
+                    <Alert variant={colorValidation.severity === "error" ? "destructive" : "default"}>
+                      <AlertDescription className="flex items-center justify-between">
+                        <span>{colorValidation.warning}</span>
+                        {colorValidation.severity === "error" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              const suggested = suggestBetterColors(
+                                customization.foregroundColor,
+                                customization.backgroundColor,
+                              )
+                              setCustomization({
+                                ...customization,
+                                foregroundColor: suggested.foreground,
+                                backgroundColor: suggested.background,
+                              })
+                            }}
+                          >
+                            Sửa tự động
+                          </Button>
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Colors */}
                     <div>
                       <Label htmlFor="foreground-color">{t("custom.foreground")}</Label>
                       <div className="flex gap-2 mt-1">
@@ -844,6 +891,48 @@ END:VCALENDAR`
                       </div>
                     </div>
 
+                    {/* Dot Style */}
+                    <div>
+                      <Label htmlFor="dot-style">Kiểu chấm QR</Label>
+                      <Select
+                        value={customization.dotStyle}
+                        onValueChange={(value: "square" | "rounded" | "circle" | "diamond") =>
+                          setCustomization({ ...customization, dotStyle: value })
+                        }
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="square">Vuông</SelectItem>
+                          <SelectItem value="rounded">Bo góc</SelectItem>
+                          <SelectItem value="circle">Tròn</SelectItem>
+                          <SelectItem value="diamond">Kim cương</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Corner Style */}
+                    <div>
+                      <Label htmlFor="corner-style">Kiểu góc định vị</Label>
+                      <Select
+                        value={customization.cornerStyle}
+                        onValueChange={(value: "square" | "rounded" | "circle") =>
+                          setCustomization({ ...customization, cornerStyle: value })
+                        }
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="square">Vuông</SelectItem>
+                          <SelectItem value="rounded">Bo góc</SelectItem>
+                          <SelectItem value="circle">Tròn</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Size and Margin */}
                     <div>
                       <Label htmlFor="size">
                         {t("custom.size")}: {customization.size}px
@@ -893,24 +982,40 @@ END:VCALENDAR`
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
 
-                    <div>
-                      <Label htmlFor="style">{t("custom.style")}</Label>
-                      <Select
-                        value={customization.style}
-                        onValueChange={(value: "square" | "dots" | "rounded") =>
-                          setCustomization({ ...customization, style: value })
-                        }
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="square">{t("custom.style_square")}</SelectItem>
-                          <SelectItem value="dots">{t("custom.style_dots")}</SelectItem>
-                          <SelectItem value="rounded">{t("custom.style_rounded")}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  {/* Color Presets */}
+                  <div>
+                    <Label className="text-sm font-medium">Bộ màu có sẵn</Label>
+                    <div className="flex gap-2 mt-2 flex-wrap">
+                      {[
+                        { name: "Đen trắng", fg: "#000000", bg: "#FFFFFF" },
+                        { name: "Xanh trắng", fg: "#1d4ed8", bg: "#FFFFFF" },
+                        { name: "Trắng đen", fg: "#FFFFFF", bg: "#000000" },
+                        { name: "Cam đen", fg: "#f97316", bg: "#000000" },
+                        { name: "Tím trắng", fg: "#7c3aed", bg: "#FFFFFF" },
+                        { name: "Xanh lá", fg: "#16a34a", bg: "#FFFFFF" },
+                      ].map((preset) => (
+                        <Button
+                          key={preset.name}
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setCustomization({
+                              ...customization,
+                              foregroundColor: preset.fg,
+                              backgroundColor: preset.bg,
+                            })
+                          }
+                          className="text-xs"
+                        >
+                          <div
+                            className="w-3 h-3 rounded mr-1 border"
+                            style={{ backgroundColor: preset.fg, borderColor: preset.bg }}
+                          />
+                          {preset.name}
+                        </Button>
+                      ))}
                     </div>
                   </div>
                 </div>

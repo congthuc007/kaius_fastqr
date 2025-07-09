@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://kaius-fastqr.vercel.app"
+  const baseUrl = "https://fastqr.kaius.id.vn"
   const currentDate = new Date().toISOString()
 
   return [
