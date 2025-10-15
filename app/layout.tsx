@@ -178,6 +178,8 @@ export default function RootLayout({
         />
 
         {/* Additional meta tags for better SEO */}
+        <meta property="og:site_name" content="Kaius FastQR" />
+        <meta name="application-name" content="Kaius FastQR" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="msapplication-TileColor" content="#2563eb" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
