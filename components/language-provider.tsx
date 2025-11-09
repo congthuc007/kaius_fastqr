@@ -8,7 +8,7 @@ type Language = "en" | "vi"
 interface LanguageContextType {
   language: Language
   setLanguage: (lang: Language) => void
-  t: (key: string) => string
+  t: (key: string, params?: Record<string, string | number>) => string
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
@@ -31,6 +31,7 @@ const translations = {
     "qr.wifi": "Wi-Fi",
     "qr.location": "Location",
     "qr.facebook": "Facebook",
+    "qr.multiurl": "Multi Link",
 
     // Form Labels
     "form.qr_type": "QR Code Type",
@@ -56,7 +57,12 @@ const translations = {
     "form.place_name": "Place Name",
     "form.latitude": "Latitude",
     "form.longitude": "Longitude",
-    "form.facebook_url": "Facebook Profile/Page URL",
+  "form.facebook_url": "Facebook Profile/Page URL",
+  "form.facebook_username": "Facebook Username",
+  "form.multiurl_urls": "Multiple URLs",
+  "form.add_link": "Add Link",
+  "form.remove_link": "Remove",
+  "form.link_title": "Link Title (optional)",
 
     // Customization
     "custom.title": "QR Code Styling",
@@ -190,6 +196,8 @@ const translations = {
     "verify.security_standard": "Standard",
     "verify.loading_verification": "Loading verification...",
     "verify.open_content": "Open {type}",
+  "verify.multi_links": "Multiple Links",
+  "verify.invalid_multi_links": "Invalid multi-link data",
 
     // Form Placeholders
     "placeholder.url": "https://example.com",
@@ -213,7 +221,10 @@ const translations = {
     "placeholder.place_name": "Place Name",
     "placeholder.latitude": "10.7769",
     "placeholder.longitude": "106.7009",
-    "placeholder.facebook": "https://facebook.com/username",
+  "placeholder.facebook": "https://facebook.com/username",
+  "placeholder.facebook_username": "nhập username (ví dụ: kaius.dev)",
+  "placeholder.multiurl_url": "https://example.com/page",
+  "placeholder.link_title": "e.g., Official website",
 
     // WiFi Security
     "wifi.wpa": "WPA/WPA2",
@@ -239,7 +250,7 @@ const translations = {
     // Header
     "app.title": "Kaius FastQR",
     "app.subtitle": "Tạo QR Code Chuyên Nghiệp",
-    "app.description": "Tạo QR code tùy chỉnh với kiểu dáng nâng cao và xác thực vị trí",
+    "app.description": "Tạo mã QR tùy chỉnh với các tuỳ chọn thiết kế nâng cao và tính năng xác thực vị trí",
 
     // QR Types
     "qr.url": "Website",
@@ -252,6 +263,7 @@ const translations = {
     "qr.wifi": "Wi-Fi",
     "qr.location": "Vị trí",
     "qr.facebook": "Facebook",
+    "qr.multiurl": "Nhiều Link",
 
     // Form Labels
     "form.qr_type": "Loại QR Code",
@@ -277,7 +289,12 @@ const translations = {
     "form.place_name": "Tên địa điểm",
     "form.latitude": "Vĩ độ",
     "form.longitude": "Kinh độ",
-    "form.facebook_url": "URL Facebook Profile/Page",
+  "form.facebook_url": "URL Facebook Profile/Page",
+  "form.facebook_username": "Facebook Username",
+  "form.multiurl_urls": "Danh sách URL",
+  "form.add_link": "Thêm link",
+  "form.remove_link": "Xóa",
+  "form.link_title": "Tiêu đề link (không bắt buộc)",
 
     // Customization
     "custom.title": "Tùy chỉnh QR Code",
@@ -410,6 +427,8 @@ const translations = {
     "verify.security_standard": "Tiêu chuẩn",
     "verify.loading_verification": "Đang tải xác thực...",
     "verify.open_content": "Mở {type}",
+  "verify.multi_links": "Danh sách liên kết",
+  "verify.invalid_multi_links": "Dữ liệu nhiều link không hợp lệ",
 
     // Form Placeholders
     "placeholder.url": "https://example.com",
@@ -433,7 +452,10 @@ const translations = {
     "placeholder.place_name": "Tên địa điểm",
     "placeholder.latitude": "10.7769",
     "placeholder.longitude": "106.7009",
-    "placeholder.facebook": "https://facebook.com/username",
+  "placeholder.facebook": "https://facebook.com/username",
+  "placeholder.facebook_username": "username (ví dụ: kaius.dev)",
+  "placeholder.multiurl_url": "https://example.com/trang",
+  "placeholder.link_title": "ví dụ: Website chính",
 
     // WiFi Security
     "wifi.wpa": "WPA/WPA2",

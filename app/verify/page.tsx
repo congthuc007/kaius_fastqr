@@ -92,6 +92,7 @@ function VerifyLocationContent() {
     coupon: Tag,
     image: ImageIcon,
     file: FileText,
+    multiurl: LinkIcon,
   }
 
   // Lấy dữ liệu QR từ URL
@@ -246,6 +247,19 @@ function VerifyLocationContent() {
           fileLink.download = fileInfo.filename
           fileLink.click()
           break
+        case "multiurl":
+          try {
+            const parsed = JSON.parse(qrData.content)
+            if (Array.isArray(parsed.links) && parsed.links.length > 0) {
+              // Open first link automatically; rest are shown in UI list
+              window.open(parsed.links[0].url, "_blank")
+            } else {
+              alert(t("verify.unsupported_qr"))
+            }
+          } catch (e) {
+            alert(t("verify.unsupported_qr"))
+          }
+          break
         default:
           alert(t("verify.unsupported_qr"))
       }
@@ -360,6 +374,38 @@ function VerifyLocationContent() {
                       <p className="text-sm font-mono break-all text-foreground">{qrData.content}</p>
                     </div>
                   )}
+                  {qrData.type === "multiurl" && (() => {
+                    let links: { url: string; title?: string }[] = []
+                    try {
+                      const parsed = JSON.parse(qrData.content)
+                      if (Array.isArray(parsed.links)) links = parsed.links
+                    } catch (e) {
+                      // ignore parse error
+                    }
+                    return (
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium">{t("verify.multi_links")}</div>
+                        <ul className="space-y-1">
+                          {links.map((l, i) => (
+                            <li key={i} className="text-sm flex items-center gap-2">
+                              <span className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground">{i + 1}</span>
+                              <a
+                                href={l.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline break-all"
+                              >
+                                {l.title?.trim() ? `${l.title} – ` : ""}{l.url}
+                              </a>
+                            </li>
+                          ))}
+                          {links.length === 0 && (
+                            <li className="text-xs text-muted-foreground">{t("verify.invalid_multi_links")}</li>
+                          )}
+                        </ul>
+                      </div>
+                    )
+                  })()}
 
                   {/* Metadata */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">

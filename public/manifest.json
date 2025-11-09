@@ -1,15 +1,15 @@
 {
   "id": "/",
-  "name": "Kaius FastQR - Professional QR Code Generator",
+  "name": "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
   "short_name": "Kaius FastQR",
-  "description": "Generate professional QR codes with advanced customization and location verification",
+  "description": "Tạo mã QR chuyên nghiệp với tuỳ chỉnh nâng cao và xác thực vị trí",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "portrait-primary",
   "scope": "/",
-  "lang": "en",
+  "lang": "vi",
   "dir": "ltr",
   "categories": ["business", "productivity", "utilities"],
   "icons": [
@@ -57,9 +57,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Generate URL QR",
-      "short_name": "URL QR",
-      "description": "Quickly generate URL QR code",
+  "name": "Tạo mã QR URL",
+  "short_name": "QR URL",
+  "description": "Tạo nhanh mã QR cho đường dẫn",
       "url": "/?type=url",
       "icons": [
         {
@@ -70,9 +70,9 @@
       ]
     },
     {
-      "name": "Generate vCard QR",
-      "short_name": "vCard QR",
-      "description": "Create contact QR code",
+  "name": "Tạo mã QR vCard",
+  "short_name": "QR vCard",
+  "description": "Tạo mã QR cho danh bạ liên hệ",
       "url": "/?type=vcard",
       "icons": [
         {
@@ -83,9 +83,9 @@
       ]
     },
     {
-      "name": "Generate WiFi QR",
-      "short_name": "WiFi QR",
-      "description": "Create WiFi connection QR",
+  "name": "Tạo mã QR WiFi",
+  "short_name": "QR WiFi",
+  "description": "Tạo mã QR kết nối WiFi",
       "url": "/?type=wifi",
       "icons": [
         {

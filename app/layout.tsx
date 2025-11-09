@@ -9,12 +9,29 @@ const inter = Inter({ subsets: ["latin", "vietnamese"] })
 
 export const metadata: Metadata = {
   title: {
-    default: "Kaius FastQR - Professional QR Code Generator | Free Online Tool",
+    default: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp | Miễn phí trực tuyến",
     template: "%s | Kaius FastQR",
   },
   description:
-    "Generate professional QR codes instantly with advanced customization options. Support for URL, vCard, WiFi, SMS, Email, Events and more. Free online QR code generator with location verification.",
+    "Tạo mã QR chuyên nghiệp tức thì với các tuỳ chọn tuỳ chỉnh nâng cao: URL, vCard, WiFi, SMS, Email, Sự kiện, Vị trí và hơn thế nữa. Công cụ tạo mã QR miễn phí hỗ trợ xác thực vị trí.",
   keywords: [
+    // Vietnamese primary keywords first for better local SEO
+    "tạo mã QR",
+    "trình tạo mã QR",
+    "tạo mã QR miễn phí",
+    "mã QR chuyên nghiệp",
+    "mã QR tuỳ chỉnh",
+    "mã QR vCard",
+    "mã QR WiFi",
+    "mã QR vị trí",
+    "mã QR có logo",
+    "mã QR sự kiện",
+    "mã QR SMS",
+    "mã QR email",
+    "Kaius FastQR",
+    "tạo QR code online",
+    "qr code cho doanh nghiệp",
+    // English (retain for bilingual reach)
     "QR code generator",
     "free QR code",
     "professional QR generator",
@@ -27,7 +44,6 @@ export const metadata: Metadata = {
     "event QR code",
     "SMS QR code",
     "email QR code",
-    "Kaius FastQR",
     "online QR generator",
     "mobile QR scanner",
   ],
@@ -47,19 +63,19 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    alternateLocale: ["vi_VN"],
+    locale: "vi_VN",
+    alternateLocale: ["en_US"],
     url: "https://fastqr.kaius.id.vn",
     siteName: "Kaius FastQR",
-    title: "Kaius FastQR - Professional QR Code Generator",
+    title: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
     description:
-      "Generate professional QR codes instantly with advanced customization options. Support for URL, vCard, WiFi, SMS, Email, Events and more.",
+      "Tạo mã QR chuyên nghiệp tức thì với tuỳ chỉnh nâng cao: URL, vCard, WiFi, SMS, Email, Sự kiện, Vị trí và hơn thế nữa.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Kaius FastQR - Professional QR Code Generator",
+        alt: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
       },
     ],
   },
@@ -67,9 +83,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@kaius_dev",
     creator: "@kaius_dev",
-    title: "Kaius FastQR - Professional QR Code Generator",
+    title: "Kaius FastQR - Mã QR chuyên nghiệp",
     description:
-      "Generate professional QR codes instantly with advanced customization options. Free online tool with location verification.",
+      "Tạo mã QR miễn phí với tuỳ chỉnh nâng cao và xác thực vị trí. Hỗ trợ URL, vCard, WiFi, SMS, Email, Sự kiện.",
     images: ["/og-image.png"],
   },
   verification: {
@@ -80,8 +96,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://fastqr.kaius.id.vn",
     languages: {
-      "en-US": "https://fastqr.kaius.id.vn/en",
       "vi-VN": "https://fastqr.kaius.id.vn/vi",
+      "en-US": "https://fastqr.kaius.id.vn/en",
     },
   },
   category: "Technology",
@@ -121,7 +137,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+  <html lang="vi" suppressHydrationWarning>
       <head>
         {/* Additional SEO tags */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -138,7 +154,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebApplication",
               name: "Kaius FastQR",
-              description: "Professional QR code generator with advanced customization options",
+              description: "Trình tạo mã QR chuyên nghiệp với các tuỳ chọn tuỳ chỉnh nâng cao",
+              inLanguage: "vi-VN",
               url: "https://fastqr.kaius.id.vn",
               applicationCategory: "BusinessApplication",
               operatingSystem: "Any",
@@ -161,16 +178,16 @@ export default function RootLayout({
                 },
               },
               featureList: [
-                "URL QR Code Generation",
-                "vCard QR Code",
-                "WiFi QR Code",
-                "SMS QR Code",
-                "Email QR Code",
-                "Event QR Code",
-                "Location QR Code",
-                "Custom Colors and Styling",
-                "Location Verification",
-                "Mobile Responsive",
+                "Tạo mã QR URL",
+                "Mã QR vCard (danh thiếp)",
+                "Mã QR WiFi",
+                "Mã QR SMS",
+                "Mã QR Email",
+                "Mã QR Sự kiện",
+                "Mã QR Vị trí",
+                "Tuỳ chỉnh màu sắc và kiểu dáng",
+                "Xác thực vị trí",
+                "Tối ưu di động",
               ],
               screenshot: "https://fastqr.kaius.id.vn/screenshot.png",
             }),

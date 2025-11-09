@@ -4,41 +4,35 @@ import dynamic from "next/dynamic"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Kaius FastQR - Professional QR Code Generator",
+  title: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
   description:
-    "Generate professional QR codes instantly with advanced customization. Supports URL, vCard, WiFi, SMS, Email, Events and more.",
+    "Tạo mã QR chuyên nghiệp ngay lập tức với tuỳ chỉnh nâng cao. Hỗ trợ URL, vCard, WiFi, SMS, Email, Sự kiện và nhiều hơn nữa.",
   keywords: [
-    "QR code generator",
-    "Kaius FastQR",
-    "custom QR code",
-    "QR code free",
-    "vCard QR",
-    "WiFi QR",
-    "SMS QR",
-    "email QR",
-    "location QR",
+    "tạo mã QR",
+    "trình tạo mã QR",
     "tạo mã QR miễn phí",
-    "trình tạo mã QR chuyên nghiệp",
-    "tạo mã QR online",
-    "mã QR tùy chỉnh",
+    "mã QR tuỳ chỉnh",
     "mã QR có logo",
-    "tạo mã QR vCard",
-    "tạo mã QR WiFi",
+    "mã QR vCard",
+    "mã QR WiFi",
     "mã QR vị trí",
     "mã QR sự kiện",
-    "mã QR tin nhắn SMS",
+    "mã QR SMS",
     "mã QR email",
     "tạo mã QR danh thiếp",
     "FastQR",
     "ứng dụng tạo mã QR miễn phí",
-    "máy tạo QR code trực tuyến",
-    "tạo mã QR có xác minh vị trí",
-    "mã QR cho doanh nghiệp"
+    "tạo mã QR có xác thực vị trí",
+    "mã QR cho doanh nghiệp",
+    // retain some English terms
+    "QR code generator",
+    "custom QR code",
+    "free QR code",
   ],
   openGraph: {
-    title: "Kaius FastQR - Professional QR Code Generator",
+    title: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
     description:
-      "Generate professional QR codes instantly with advanced customization. Supports vCard, WiFi, SMS, and more.",
+      "Tạo mã QR chuyên nghiệp tức thì với tuỳ chỉnh nâng cao. Hỗ trợ vCard, WiFi, SMS và nhiều hơn nữa.",
     url: "https://fastqr.kaius.id.vn",
     siteName: "Kaius FastQR",
     images: [
@@ -55,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kaius FastQR",
     description:
-      "Free online QR code generator with advanced customization and location verification.",
+      "Công cụ tạo mã QR miễn phí với tuỳ chỉnh nâng cao và xác thực vị trí.",
     images: ["/og-image.png"],
   },
   robots: {

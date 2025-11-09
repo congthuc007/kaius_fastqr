@@ -43,7 +43,7 @@ interface LocationData {
   accuracy: number
 }
 
-type QRType = "url" | "text" | "email" | "phone" | "vcard" | "sms" | "event" | "wifi" | "location" | "facebook"
+type QRType = "url" | "text" | "email" | "phone" | "vcard" | "sms" | "event" | "wifi" | "location" | "facebook" | "multiurl"
 
 interface QRData {
   type: QRType
@@ -115,7 +115,9 @@ export default function QRGenerator() {
   })
   const [wifiData, setWifiData] = useState({ ssid: "", password: "", security: "WPA", hidden: false })
   const [locationData, setLocationData] = useState({ latitude: "", longitude: "", label: "" })
-  const [facebookData, setFacebookData] = useState("")
+  const [facebookUsername, setFacebookUsername] = useState("")
+  // Multi-link entries with optional title
+  const [multiUrls, setMultiUrls] = useState<{ url: string; title: string }[]>([{ url: "", title: "" }])
 
   // Lấy vị trí hiện tại
   const getCurrentLocation = () => {
@@ -231,7 +233,22 @@ END:VCALENDAR`
         return `geo:${lat},${lng}?q=${lat},${lng}(${encodeURIComponent(locationData.label || "Location")})`
 
       case "facebook":
-        return facebookData.trim()
+        {
+          let username = facebookUsername.trim()
+          // normalize username: remove leading @ and spaces
+          if (username.startsWith("@")) username = username.slice(1)
+          // basic sanitation: keep common allowed chars (letters, numbers, dot, underscore)
+          username = username.replace(/[^a-zA-Z0-9._]/g, "")
+          return username ? `https://facebook.com/${username}` : ""
+        }
+
+      case "multiurl": {
+        const cleaned = multiUrls
+          .map((entry) => ({ url: entry.url.trim(), title: entry.title.trim() }))
+          .filter((e) => e.url !== "")
+        if (!cleaned.length) return ""
+        return JSON.stringify({ links: cleaned })
+      }
 
       default:
         return ""
@@ -258,9 +275,11 @@ END:VCALENDAR`
       case "wifi":
         return wifiData.ssid.trim() !== ""
       case "location":
-        return (locationData.latitude && locationData.longitude) || location !== null
+        return ((!!locationData.latitude && !!locationData.longitude) || location !== null)
       case "facebook":
-        return facebookData.trim() !== ""
+        return facebookUsername.trim() !== ""
+      case "multiurl":
+        return multiUrls.some((e) => e.url.trim() !== "")
       default:
         return false
     }
@@ -371,7 +390,10 @@ END:VCALENDAR`
         setLocationData({ latitude: "", longitude: "", label: "" })
         break
       case "facebook":
-        setFacebookData("")
+        setFacebookUsername("")
+        break
+      case "multiurl":
+        setMultiUrls([{ url: "", title: "" }])
         break
     }
   }
@@ -387,6 +409,7 @@ END:VCALENDAR`
     wifi: Wifi,
     location: Navigation,
     facebook: Facebook,
+    multiurl: LinkIcon,
   }
 
   return (
@@ -414,7 +437,7 @@ END:VCALENDAR`
                 <div className="space-y-4">
                   <Label className="text-base font-medium">{t("form.qr_type")}</Label>
                   <Tabs value={qrType} onValueChange={(value) => setQrType(value as QRType)} className="w-full">
-                    <TabsList className="grid grid-cols-5 lg:grid-cols-10 h-auto gap-1 p-1">
+                    <TabsList className="grid grid-cols-5 lg:grid-cols-11 h-auto gap-1 p-1">
                       {Object.entries({
                         url: t("qr.url"),
                         text: t("qr.text"),
@@ -426,6 +449,7 @@ END:VCALENDAR`
                         wifi: t("qr.wifi"),
                         location: t("qr.location"),
                         facebook: t("qr.facebook"),
+                        multiurl: t("qr.multiurl"),
                       }).map(([type, label]) => {
                         const Icon = qrTypeIcons[type as QRType]
                         return (
@@ -801,15 +825,74 @@ END:VCALENDAR`
 
                       <TabsContent value="facebook" className="space-y-4">
                         <div>
-                          <Label htmlFor="facebook">{t("form.facebook_url")} *</Label>
+                          <Label htmlFor="facebook-username">{t("form.facebook_username")} *</Label>
                           <Input
-                            id="facebook"
-                            type="url"
-                            placeholder={t("placeholder.facebook")}
-                            value={facebookData}
-                            onChange={(e) => setFacebookData(e.target.value)}
+                            id="facebook-username"
+                            type="text"
+                            placeholder={t("placeholder.facebook_username")}
+                            value={facebookUsername}
+                            onChange={(e) => setFacebookUsername(e.target.value)}
                             className="mt-1"
                           />
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="multiurl" className="space-y-4">
+                        <div className="space-y-3">
+                          <Label>{t("form.multiurl_urls")} *</Label>
+                          {multiUrls.map((entry, idx) => (
+                            <div key={idx} className="flex flex-col gap-2 border p-3 rounded-md bg-muted/30">
+                              <div className="flex gap-2">
+                                <Input
+                                  type="url"
+                                  placeholder={t("placeholder.multiurl_url")}
+                                  value={entry.url}
+                                  onChange={(e) => {
+                                    const copy = [...multiUrls]
+                                    copy[idx] = { ...copy[idx], url: e.target.value }
+                                    setMultiUrls(copy)
+                                  }}
+                                  className="flex-1"
+                                />
+                                {multiUrls.length > 1 && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setMultiUrls((prev) => prev.filter((_, i) => i !== idx))}
+                                  >
+                                    {t("form.remove_link")}
+                                  </Button>
+                                )}
+                              </div>
+                              <Input
+                                type="text"
+                                placeholder={t("placeholder.link_title")}
+                                value={entry.title}
+                                onChange={(e) => {
+                                  const copy = [...multiUrls]
+                                  copy[idx] = { ...copy[idx], title: e.target.value }
+                                  setMultiUrls(copy)
+                                }}
+                                className="flex-1"
+                              />
+                            </div>
+                          ))}
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              onClick={() => setMultiUrls((prev) => [...prev, { url: "", title: "" }])}
+                            >
+                              {t("form.add_link")}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setMultiUrls([{ url: "", title: "" }])}
+                            >
+                              {t("btn.reset")}
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{t("placeholder.multiurl_url")}</p>
                         </div>
                       </TabsContent>
                     </div>
