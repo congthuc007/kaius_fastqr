@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ExternalLink, LinkIcon, Shield, Clock, Loader2 } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
+import { decodeFromBase64 } from "@/utils/base64"
 
 interface MultiLinkEntry {
   url: string
@@ -29,7 +30,7 @@ function MultiLinkContent() {
     const dataParam = searchParams.get("data")
     if (!dataParam) return null
     try {
-      const decoded = JSON.parse(atob(dataParam))
+        const decoded = JSON.parse(decodeFromBase64(dataParam))
       if (!decoded?.links || !Array.isArray(decoded.links)) return null
       const sanitizedLinks = decoded.links
         .map((item: MultiLinkEntry) => {

@@ -35,6 +35,7 @@ import {
   Target,
   Smartphone,
 } from "lucide-react"
+import { decodeFromBase64 } from "@/utils/base64"
 
 interface LocationData {
   latitude: number
@@ -100,7 +101,7 @@ function VerifyLocationContent() {
     const dataParam = searchParams.get("data")
     if (dataParam) {
       try {
-        const decoded = JSON.parse(atob(dataParam))
+        const decoded = JSON.parse(decodeFromBase64(dataParam))
         setQrData(decoded)
 
         // Nếu không yêu cầu định vị, tự động chuyển hướng

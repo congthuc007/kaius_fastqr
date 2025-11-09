@@ -312,7 +312,7 @@ const translations = {
   "form.facebook_username": "Tên người dùng Facebook",
   "form.multiurl_urls": "Nhiều URL",
   "form.add_link": "Thêm liên kết",
-  "form.remove_link": "Di dời",
+  "form.remove_link": "Xóa",
   "form.link_title": "Tiêu đề liên kết (tùy chọn)",
 
     // Customization

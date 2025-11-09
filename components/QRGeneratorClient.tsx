@@ -36,6 +36,7 @@ import {
 import QRCodeLib from "qrcode"
 import Image from "next/image"
 import { validateQRColors, suggestBetterColors } from "@/utils/color-validation"
+import { encodeToBase64 } from "@/utils/base64"
 
 interface LocationData {
   latitude: number
@@ -327,7 +328,7 @@ END:VCALENDAR`
         try {
           const parsed = JSON.parse(finalContent)
           const linksUrl = new URL(`${window.location.origin}/links`)
-          linksUrl.searchParams.append("data", btoa(JSON.stringify(parsed)))
+          linksUrl.searchParams.append("data", encodeToBase64(JSON.stringify(parsed)))
           finalContent = linksUrl.toString()
         } catch {
           setError(t("msg.generation_error"))
@@ -350,7 +351,7 @@ END:VCALENDAR`
         }
 
         const verificationUrl = new URL(`${window.location.origin}/verify`)
-        verificationUrl.searchParams.append("data", btoa(JSON.stringify(qrData)))
+        verificationUrl.searchParams.append("data", encodeToBase64(JSON.stringify(qrData)))
         finalContent = verificationUrl.toString()
       }
 
