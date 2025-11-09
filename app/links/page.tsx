@@ -40,12 +40,12 @@ function MultiLinkContent() {
             title: typeof item.title === "string" && item.title.trim().length > 0 ? item.title.trim() : undefined,
           }
         })
-        .filter((entry): entry is MultiLinkEntry => Boolean(entry))
+        .filter((entry: MultiLinkEntry | null): entry is MultiLinkEntry => Boolean(entry))
 
       if (!sanitizedLinks.length) return null
 
       return {
-        links: sanitizedLinks.map(({ url, title }) => ({ url, title })),
+        links: sanitizedLinks.map(({ url, title }: MultiLinkEntry) => ({ url, title })),
       }
     } catch {
       return null
@@ -70,7 +70,7 @@ function MultiLinkContent() {
           </Alert>
         ) : (
           <div className="space-y-4">
-            {payload.links.map((entry, idx) => (
+            {payload.links.map((entry: MultiLinkEntry, idx: number) => (
               <Card key={`${entry.url}-${idx}`} className="shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                   <div>
