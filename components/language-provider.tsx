@@ -74,6 +74,14 @@ const translations = {
     "custom.dot_style": "Dot Style",
     "custom.corner_style": "Corner Style",
     "custom.color_presets": "Color Presets",
+  "custom.logo_section": "Logo Overlay",
+  "custom.add_logo": "Add logo in the center",
+  "custom.logo_size": "Logo size",
+  "custom.logo_padding": "Logo padding",
+  "custom.logo_round": "Rounded logo background",
+  "custom.logo_bg": "Logo background color",
+  "custom.logo_file": "Logo image",
+  "custom.remove_logo": "Remove logo",
 
     // Dot Styles
     "dot.square": "Square",
@@ -306,6 +314,14 @@ const translations = {
     "custom.dot_style": "Kiểu chấm QR",
     "custom.corner_style": "Kiểu góc định vị",
     "custom.color_presets": "Bộ màu có sẵn",
+  "custom.logo_section": "Chèn logo",
+  "custom.add_logo": "Chèn logo ở giữa QR",
+  "custom.logo_size": "Kích thước logo",
+  "custom.logo_padding": "Khoảng đệm logo",
+  "custom.logo_round": "Bo tròn nền logo",
+  "custom.logo_bg": "Màu nền logo",
+  "custom.logo_file": "Ảnh logo",
+  "custom.remove_logo": "Xóa logo",
 
     // Dot Styles
     "dot.square": "Vuông",

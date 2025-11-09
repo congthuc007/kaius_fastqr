@@ -62,6 +62,12 @@ interface QRCustomization {
   errorCorrectionLevel: "L" | "M" | "Q" | "H"
   dotStyle: "square" | "rounded" | "circle" | "diamond"
   cornerStyle: "square" | "rounded" | "circle"
+  // Logo customization
+  logoEnabled?: boolean
+  logoSize?: number // percentage of QR size
+  logoPadding?: number // padding around logo box in px
+  logoRound?: boolean
+  logoBgColor?: string
 }
 
 export default function QRGenerator() {
@@ -88,6 +94,11 @@ export default function QRGenerator() {
     errorCorrectionLevel: "M",
     dotStyle: "square",
     cornerStyle: "square",
+    logoEnabled: false,
+    logoSize: 20,
+    logoPadding: 8,
+    logoRound: true,
+    logoBgColor: "#FFFFFF",
   })
 
   // Form data cho các loại QR khác nhau
@@ -118,6 +129,9 @@ export default function QRGenerator() {
   const [facebookUsername, setFacebookUsername] = useState("")
   // Multi-link entries with optional title
   const [multiUrls, setMultiUrls] = useState<{ url: string; title: string }[]>([{ url: "", title: "" }])
+  // Logo file state
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
 
   // Lấy vị trí hiện tại
   const getCurrentLocation = () => {
@@ -335,8 +349,16 @@ END:VCALENDAR`
         },
         errorCorrectionLevel: customization.errorCorrectionLevel,
       })
-
-      setQrCodeUrl(qrCodeDataUrl)
+      // Compose logo overlay if enabled
+      let finalDataUrl = qrCodeDataUrl
+      if (customization.logoEnabled && logoFile) {
+        try {
+          finalDataUrl = await composeLogo(qrCodeDataUrl)
+        } catch (e) {
+          // ignore composition errors
+        }
+      }
+      setQrCodeUrl(finalDataUrl)
     } catch (err) {
       setError(t("msg.generation_error"))
     } finally {
@@ -360,6 +382,8 @@ END:VCALENDAR`
   const resetForm = () => {
     setQrCodeUrl("")
     setError("")
+    setLogoFile(null)
+    setLogoPreview(null)
     // Reset form data based on type
     switch (qrType) {
       case "url":
@@ -396,6 +420,101 @@ END:VCALENDAR`
         setMultiUrls([{ url: "", title: "" }])
         break
     }
+  }
+
+  // Compose logo overlay using canvas
+  const composeLogo = async (qrDataUrl: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const qrImg = document.createElement("img")
+      qrImg.crossOrigin = "anonymous"
+      qrImg.onload = () => {
+        const canvas = document.createElement("canvas")
+        canvas.width = qrImg.width
+        canvas.height = qrImg.height
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return reject(new Error("No 2D context"))
+        ctx.drawImage(qrImg, 0, 0)
+
+        if (!logoPreview) return resolve(qrDataUrl)
+
+        const logoImg = document.createElement("img")
+        logoImg.crossOrigin = "anonymous"
+        logoImg.onload = () => {
+          const sizePct = customization.logoSize || 20
+          const logoBoxSize = Math.round((sizePct / 100) * qrImg.width)
+          const padding = customization.logoPadding || 0
+          const totalBoxSize = logoBoxSize + padding * 2
+          const x = (qrImg.width - totalBoxSize) / 2
+          const y = (qrImg.height - totalBoxSize) / 2
+
+          // Draw background container so circular logos remain true circles
+          ctx.save()
+          ctx.fillStyle = customization.logoBgColor || "#FFFFFF"
+          if (customization.logoRound) {
+            const centerX = x + totalBoxSize / 2
+            const centerY = y + totalBoxSize / 2
+            const radius = totalBoxSize / 2
+            ctx.beginPath()
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
+            ctx.closePath()
+            ctx.fill()
+          } else {
+            ctx.fillRect(x, y, totalBoxSize, totalBoxSize)
+          }
+          ctx.restore()
+
+          // Crop and scale logo to perfect square so it never leaves empty bars
+          const naturalWidth = logoImg.naturalWidth || logoImg.width
+          const naturalHeight = logoImg.naturalHeight || logoImg.height
+          const squareSourceSize = Math.min(naturalWidth, naturalHeight)
+          const sourceX = naturalWidth > naturalHeight ? (naturalWidth - naturalHeight) / 2 : 0
+          const sourceY = naturalHeight > naturalWidth ? (naturalHeight - naturalWidth) / 2 : 0
+          const drawX = x + padding
+          const drawY = y + padding
+
+          if (customization.logoRound) {
+            ctx.save()
+            const clipRadius = logoBoxSize / 2
+            const clipCenterX = x + totalBoxSize / 2
+            const clipCenterY = y + totalBoxSize / 2
+            ctx.beginPath()
+            ctx.arc(clipCenterX, clipCenterY, clipRadius, 0, Math.PI * 2)
+            ctx.closePath()
+            ctx.clip()
+            ctx.drawImage(
+              logoImg,
+              sourceX,
+              sourceY,
+              squareSourceSize,
+              squareSourceSize,
+              drawX,
+              drawY,
+              logoBoxSize,
+              logoBoxSize,
+            )
+            ctx.restore()
+          } else {
+            ctx.drawImage(
+              logoImg,
+              sourceX,
+              sourceY,
+              squareSourceSize,
+              squareSourceSize,
+              drawX,
+              drawY,
+              logoBoxSize,
+              logoBoxSize,
+            )
+          }
+
+          resolve(canvas.toDataURL("image/png"))
+        }
+        logoImg.onerror = reject
+        logoImg.src = logoPreview
+      }
+      qrImg.onerror = reject
+      qrImg.src = qrDataUrl
+    })
   }
 
   const qrTypeIcons = {
@@ -1059,6 +1178,104 @@ END:VCALENDAR`
                         </Button>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Logo Overlay */}
+                  <div className="mt-4 border rounded-md p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label className="font-medium">{t("custom.logo_section")}</Label>
+                      <Switch
+                        checked={!!customization.logoEnabled}
+                        onCheckedChange={(v) => setCustomization({ ...customization, logoEnabled: v })}
+                      />
+                    </div>
+                    {customization.logoEnabled && (
+                      <div className="space-y-3">
+                        <div className="flex flex-col gap-2">
+                          <Label>{t("custom.logo_file")}</Label>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0] || null
+                              setLogoFile(file)
+                              if (file) {
+                                const reader = new FileReader()
+                                reader.onload = (ev) => setLogoPreview(ev.target?.result as string)
+                                reader.readAsDataURL(file)
+                              } else {
+                                setLogoPreview(null)
+                              }
+                            }}
+                          />
+                          {logoPreview && (
+                            <div className="flex items-center gap-4">
+                              <div className="h-16 w-16 rounded border overflow-hidden">
+                                <img src={logoPreview} alt="logo" className="h-full w-full object-cover" />
+                              </div>
+                              <Button
+                                variant="outline"
+                                type="button"
+                                onClick={() => {
+                                  setLogoFile(null)
+                                  setLogoPreview(null)
+                                }}
+                              >
+                                {t("custom.remove_logo")}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <Label>
+                            {t("custom.logo_size")}: {customization.logoSize}%
+                          </Label>
+                          <Slider
+                            value={[customization.logoSize || 20]}
+                            onValueChange={(v) => setCustomization({ ...customization, logoSize: v[0] })}
+                            min={10}
+                            max={35}
+                            step={1}
+                          />
+                        </div>
+
+                        <div>
+                          <Label>
+                            {t("custom.logo_padding")}: {customization.logoPadding}px
+                          </Label>
+                          <Slider
+                            value={[customization.logoPadding || 8]}
+                            onValueChange={(v) => setCustomization({ ...customization, logoPadding: v[0] })}
+                            min={0}
+                            max={24}
+                            step={1}
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Switch
+                            checked={!!customization.logoRound}
+                            onCheckedChange={(v) => setCustomization({ ...customization, logoRound: v })}
+                          />
+                          <Label>{t("custom.logo_round")}</Label>
+                        </div>
+
+                        <div>
+                          <Label>{t("custom.logo_bg")}</Label>
+                          <Input
+                            type="color"
+                            value={customization.logoBgColor}
+                            onChange={(e) => setCustomization({ ...customization, logoBgColor: e.target.value })}
+                            className="h-10 w-24 p-1"
+                          />
+                        </div>
+
+                        <p className="text-xs text-muted-foreground">
+                          {t("custom.add_logo")}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
