@@ -322,6 +322,20 @@ END:VCALENDAR`
     try {
       let finalContent = generateQRContent()
 
+      // For multi-link QR, redirect to hosted landing page with encoded data
+      if (qrType === "multiurl" && finalContent) {
+        try {
+          const parsed = JSON.parse(finalContent)
+          const linksUrl = new URL(`${window.location.origin}/links`)
+          linksUrl.searchParams.append("data", btoa(JSON.stringify(parsed)))
+          finalContent = linksUrl.toString()
+        } catch {
+          setError(t("msg.generation_error"))
+          setIsLoading(false)
+          return
+        }
+      }
+
       // Nếu yêu cầu định vị, tạo URL đến trang verification
       if (requireLocation && location) {
         const qrData: QRData = {

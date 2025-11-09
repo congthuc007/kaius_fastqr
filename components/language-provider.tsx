@@ -198,14 +198,25 @@ const translations = {
     "verify.location_verified_locally": "Your location is verified locally",
     "verify.no_data_storage": "No Data Storage",
     "verify.no_storage_desc": "We don't store your personal information",
+
+    // Multi Link Landing
+    "multilink.title": "Choose a destination",
+    "multilink.description": "Pick a link below to continue to your desired content.",
+    "multilink.empty_state": "We couldn't find any links for this QR code.",
+    "multilink.link_default": "Link {index}",
+    "multilink.available_anytime": "Available anytime",
+    "multilink.visit": "Open link",
+    "multilink.safe_title": "Safe & trusted",
+    "multilink.safe_desc": "All destinations were shared via Kaius FastQR.",
+    "multilink.create_own": "Create your own",
     "verify.qr_details": "QR Details",
     "verify.security_level": "Security Level",
     "verify.security_high": "High",
     "verify.security_standard": "Standard",
     "verify.loading_verification": "Loading verification...",
     "verify.open_content": "Open {type}",
-  "verify.multi_links": "Multiple Links",
-  "verify.invalid_multi_links": "Invalid multi-link data",
+    "verify.multi_links": "Multiple Links",
+    "verify.invalid_multi_links": "Invalid multi-link data",
 
     // Form Placeholders
     "placeholder.url": "https://example.com",
@@ -443,8 +454,19 @@ const translations = {
     "verify.security_standard": "Tiêu chuẩn",
     "verify.loading_verification": "Đang tải xác thực...",
     "verify.open_content": "Mở {type}",
-  "verify.multi_links": "Danh sách liên kết",
-  "verify.invalid_multi_links": "Dữ liệu nhiều link không hợp lệ",
+    "verify.multi_links": "Danh sách liên kết",
+    "verify.invalid_multi_links": "Dữ liệu nhiều link không hợp lệ",
+
+    // Multi Link Landing
+    "multilink.title": "Chon diem den",
+    "multilink.description": "Hay chon mot lien ket ben duoi de truy cap noi dung mong muon.",
+    "multilink.empty_state": "Khong tim thay lien ket nao cho QR code nay.",
+    "multilink.link_default": "Lien ket {index}",
+    "multilink.available_anytime": "Truy cap moi luc",
+    "multilink.visit": "Mo lien ket",
+    "multilink.safe_title": "An toan & tin cay",
+    "multilink.safe_desc": "Tat ca lien ket duoc chia se qua Kaius FastQR.",
+    "multilink.create_own": "Tu tao lien ket",
 
     // Form Placeholders
     "placeholder.url": "https://example.com",
