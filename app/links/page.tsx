@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Header } from "@/components/header"
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ExternalLink, LinkIcon, Shield, Clock } from "lucide-react"
+import { ExternalLink, LinkIcon, Shield, Clock, Loader2 } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
 
 interface MultiLinkEntry {
@@ -21,7 +21,7 @@ interface MultiLinkPayload {
   links: MultiLinkEntry[]
 }
 
-export default function MultiLinkLanding() {
+function MultiLinkContent() {
   const searchParams = useSearchParams()
   const { t } = useLanguage()
 
@@ -112,5 +112,25 @@ export default function MultiLinkLanding() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function MultiLinkLanding() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background">
+          <Header />
+          <main className="container mx-auto px-4 py-16 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3 text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <p>Loading links...</p>
+            </div>
+          </main>
+        </div>
+      }
+    >
+      <MultiLinkContent />
+    </Suspense>
   )
 }
