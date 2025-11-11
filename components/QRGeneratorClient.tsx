@@ -2,7 +2,7 @@
 
 import React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,11 +32,21 @@ import {
   Palette,
   Settings,
   Loader2,
+  Camera,
+  Upload,
+  Copy,
+  ExternalLink,
+  StopCircle,
+  Trash2,
 } from "lucide-react"
 import QRCodeLib from "qrcode"
-import Image from "next/image"
+import jsQR from "jsqr"
+import NextImage from "next/image"
 import { validateQRColors, suggestBetterColors } from "@/utils/color-validation"
 import { encodeToBase64 } from "@/utils/base64"
+import { Separator } from "@/components/ui/separator"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface LocationData {
   latitude: number
@@ -133,6 +143,18 @@ export default function QRGenerator() {
   // Logo file state
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  // QR Scanner state
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const animationFrameRef = useRef<number | null>(null)
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
+  const [isScanning, setIsScanning] = useState(false)
+  const [scanResult, setScanResult] = useState("")
+  const [scanError, setScanError] = useState("")
+  const [scanMessage, setScanMessage] = useState("")
+  const [isDecodingImage, setIsDecodingImage] = useState(false)
+  const [scannerOpen, setScannerOpen] = useState(false)
 
   // Lấy vị trí hiện tại
   const getCurrentLocation = () => {
@@ -185,6 +207,179 @@ export default function QRGenerator() {
     const validation = validateQRColors(customization.foregroundColor, customization.backgroundColor, t)
     setColorValidation(validation)
   }, [customization.foregroundColor, customization.backgroundColor, t])
+
+  const stopCameraScan = () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
+    }
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop())
+      setCameraStream(null)
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null
+    }
+    setIsScanning(false)
+  }
+
+  const scanFrame = () => {
+    if (!videoRef.current || !canvasRef.current) return
+    const video = videoRef.current
+    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+      animationFrameRef.current = requestAnimationFrame(scanFrame)
+      return
+    }
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const code = jsQR(imageData.data, imageData.width, imageData.height)
+    if (code?.data) {
+      setScanResult(code.data)
+      setScanError("")
+      setScanMessage(t("scan.qr_found"))
+      stopCameraScan()
+    } else {
+      animationFrameRef.current = requestAnimationFrame(scanFrame)
+    }
+  }
+
+  const startCameraScan = async () => {
+    setScanError("")
+    setScanMessage("")
+    setScanResult("")
+    stopCameraScan()
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      setScanError(t("scan.no_camera_support"))
+      return
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+      })
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        await videoRef.current.play()
+      }
+      setCameraStream(stream)
+      setIsScanning(true)
+      animationFrameRef.current = requestAnimationFrame(scanFrame)
+    } catch (err) {
+      console.error(err)
+      setScanError(t("scan.camera_permission"))
+    }
+  }
+
+  const decodeCanvasForImage = (img: HTMLImageElement) => {
+    const canvas = document.createElement("canvas")
+    canvas.width = img.width
+    canvas.height = img.height
+    const ctx = canvas.getContext("2d")
+    if (!ctx) {
+      setScanError(t("scan.no_qr_found"))
+      return
+    }
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const code = jsQR(imageData.data, imageData.width, imageData.height)
+    if (code?.data) {
+      setScanResult(code.data)
+      setScanMessage(t("scan.qr_found"))
+      setScanError("")
+    } else {
+      setScanError(t("scan.no_qr_found"))
+    }
+  }
+
+  const handleImageUpload = (file: File | null) => {
+    if (!file) return
+    setScanError("")
+    setScanMessage("")
+    setIsDecodingImage(true)
+    const reader = new FileReader()
+    reader.onload = () => {
+      const img = new Image()
+      img.onload = () => {
+        decodeCanvasForImage(img)
+        setIsDecodingImage(false)
+      }
+      img.onerror = () => {
+        setScanError(t("scan.invalid_image"))
+        setIsDecodingImage(false)
+      }
+      img.src = reader.result as string
+    }
+    reader.onerror = () => {
+      setScanError(t("scan.invalid_image"))
+      setIsDecodingImage(false)
+    }
+    reader.readAsDataURL(file)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const clearScanResult = () => {
+    setScanResult("")
+    setScanMessage("")
+    setScanError("")
+  }
+
+  const copyScanResult = async () => {
+    if (!scanResult) return
+    try {
+      await navigator.clipboard.writeText(scanResult)
+      setScanMessage(t("scan.copied"))
+    } catch (err) {
+      console.error(err)
+      setScanError(t("scan.copy_failed"))
+    }
+  }
+
+  const isLikelyUrl = (value: string) => {
+    try {
+      const potential = new URL(value)
+      return Boolean(potential)
+    } catch {
+      return false
+    }
+  }
+
+  const triggerImageUpload = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleCameraButtonClick = () => {
+    if (isScanning || cameraStream) {
+      stopCameraScan()
+    } else {
+      startCameraScan()
+    }
+  }
+
+  const handleScannerOpenChange = (open: boolean) => {
+    setScannerOpen(open)
+  }
+
+  useEffect(() => {
+    if (scannerOpen) {
+      setScanError("")
+      setScanMessage("")
+      setScanResult("")
+    } else {
+      stopCameraScan()
+    }
+  }, [scannerOpen])
+
+  useEffect(() => {
+    return () => {
+      stopCameraScan()
+    }
+  }, [])
 
   // Tạo nội dung QR dựa trên loại
   const generateQRContent = (): string => {
@@ -551,8 +746,8 @@ END:VCALENDAR`
       <Header />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t("app.description")}</p>
+        <div className="mb-8 text-center lg:text-left space-y-2">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0">{t("app.description")}</p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -560,10 +755,28 @@ END:VCALENDAR`
           <div className="xl:col-span-2 space-y-6">
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <QrCode className="h-5 w-5" />
-                  {t("form.qr_type")}
-                </CardTitle>
+                <div className="flex items-center justify-between gap-3">
+                  <CardTitle className="flex items-center gap-2">
+                    <QrCode className="h-5 w-5" />
+                    {t("form.qr_type")}
+                  </CardTitle>
+                  <TooltipProvider delayDuration={150}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-10 w-10 rounded-full"
+                          onClick={() => setScannerOpen(true)}
+                          aria-label={t("scan.open_dialog")}
+                        >
+                          <Camera className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">{t("scan.open_dialog")}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <CardDescription>{t("app.description")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -1378,18 +1591,109 @@ END:VCALENDAR`
           {/* QR Preview & Info */}
           <div className="space-y-6">
             <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="flex flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
                   <QrCode className="h-5 w-5" />
-                  {t("qr_info.preview")}
-                </CardTitle>
+                  <CardTitle>{t("qr_info.preview")}</CardTitle>
+                </div>
+                <Dialog open={scannerOpen} onOpenChange={handleScannerOpenChange}>
+                  <DialogContent className="w-[92vw] max-w-2xl sm:max-w-lg max-h-[90vh] overflow-y-auto">
+                    <DialogHeader className="space-y-1">
+                      <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                        <Camera className="h-5 w-5 text-primary" />
+                        {t("scan.title")}
+                      </DialogTitle>
+                      <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
+                        {t("scan.description")}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-5">
+                      <div className="relative aspect-square w-full overflow-hidden rounded-xl border bg-muted sm:aspect-[4/3]">
+                        <video ref={videoRef} className="h-full w-full object-cover" playsInline muted autoPlay />
+                        {!cameraStream && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/85 px-6 text-center text-xs text-muted-foreground">
+                            <Camera className="mb-2 h-6 w-6" />
+                            <span>{t("scan.camera_inactive")}</span>
+                          </div>
+                        )}
+                        {isScanning && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/40 text-primary-foreground">
+                            <Loader2 className="mb-2 h-6 w-6 animate-spin" />
+                            <span className="text-xs">{t("scan.camera_scanning")}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-center gap-3">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={handleCameraButtonClick}
+                          aria-label={isScanning || cameraStream ? t("scan.stop") : t("scan.start")}
+                        >
+                          {isScanning || cameraStream ? <StopCircle className="h-4 w-4" /> : <Camera className="h-4 w-4" />}
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={triggerImageUpload}
+                          disabled={isDecodingImage}
+                          aria-label={t("scan.upload_label")}
+                        >
+                          {isDecodingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                        </Button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageUpload(e.target.files?.[0] || null)}
+                        />
+                      </div>
+                      <Separator />
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">{t("scan.result")}</Label>
+                        {scanResult ? (
+                          <>
+                            <div className="rounded-md bg-muted p-3 text-xs break-all">{scanResult}</div>
+                            <div className="flex flex-wrap gap-2">
+                              <Button size="icon" variant="outline" onClick={copyScanResult} aria-label={t("scan.copy")}>
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                              {isLikelyUrl(scanResult) && (
+                                <Button size="icon" variant="outline" asChild aria-label={t("scan.open")}>
+                                  <a href={scanResult} target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                              )}
+                              <Button size="icon" variant="ghost" onClick={clearScanResult} aria-label={t("scan.clear")}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">{t("scan.no_result")}</p>
+                        )}
+                        <div className="space-y-1 text-xs">
+                          {scanMessage && <p className="text-green-600">{scanMessage}</p>}
+                          {scanError && (
+                            <Alert variant="destructive">
+                              <AlertDescription>{scanError}</AlertDescription>
+                            </Alert>
+                          )}
+                        </div>
+                      </div>
+                      <canvas ref={canvasRef} className="hidden" />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent className="space-y-4">
                 {qrCodeUrl ? (
                   <div className="space-y-4">
                     <div className="flex justify-center">
                       <div className="p-4 bg-white rounded-lg shadow-inner">
-                        <Image
+                        <NextImage
                           src={qrCodeUrl || "/placeholder.svg"}
                           alt="Generated QR Code"
                           width={customization.size}
