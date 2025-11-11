@@ -301,7 +301,7 @@ const translations = {
     "qr.email": "E-mail",
     "qr.phone": "Điện thoại",
     "qr.vcard": "Liên hệ",
-    "qr.sms": "tin nhắn SMS",
+    "qr.sms": "SMS",
     "qr.event": "Sự kiện",
     "qr.wifi": "Wi-Fi",
     "qr.location": "Vị trí",
