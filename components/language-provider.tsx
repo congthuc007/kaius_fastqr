@@ -155,12 +155,14 @@ const translations = {
     "msg.qr_generated": "QR code generated successfully",
     "msg.invalid_colors": "Cannot generate QR code with current colors. Please choose different colors.",
     "msg.generation_error": "Cannot generate QR code. Please try again.",
+    "msg.logo_border_conflict": "Logo border color must differ from the QR colors before generating.",
 
     // Validation Messages
     "validation.contrast_too_low":
       "Contrast too low! QR code may not be scannable. Minimum contrast ratio of 3:1 recommended",
     "validation.contrast_low": "Low contrast. QR code may be difficult to scan in low light conditions.",
     "validation.colors_too_similar": "Colors too similar! QR code will not be scannable.",
+    "validation.logo_border_conflict": "Logo border color must be different from the QR colors for clear contrast.",
 
     // Guide
     "guide.title": "How to Use",
@@ -430,11 +432,13 @@ const translations = {
     "msg.qr_generated": "Mã QR được tạo thành công",
     "msg.invalid_colors": "Không thể tạo mã QR với màu hiện tại.Vui lòng chọn màu sắc khác nhau.",
     "msg.generation_error": "Không thể tạo mã QR.Vui lòng thử lại.",
+    "msg.logo_border_conflict": "Vui lòng chọn màu viền logo khác với màu QR trước khi tạo.",
 
     // Validation Messages
     "validation.contrast_too_low": "Độ tương phản quá thấp!Mã QR có thể không quét được.Tỷ lệ tương phản tối thiểu được khuyến nghị là 3:1",
     "validation.contrast_low": "Độ tương phản thấp.Mã QR có thể khó quét trong điều kiện ánh sáng yếu.",
     "validation.colors_too_similar": "Màu sắc quá giống nhau!Mã QR sẽ không thể quét được.",
+    "validation.logo_border_conflict": "Màu viền logo phải khác màu mã QR để tạo độ tương phản rõ ràng.",
 
     // Guide
     "guide.title": "Cách sử dụng",

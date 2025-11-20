@@ -4,49 +4,60 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/components/language-provider"
+import { seoDefaults, buildCanonicalUrl } from "@/lib/site-config"
 
 const inter = Inter({ subsets: ["latin", "vietnamese"] })
 
-export const metadata: Metadata = {
-  title: {
-    default: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp | Miễn phí trực tuyến",
-    template: "%s | Kaius FastQR",
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: seoDefaults.siteName,
+  description: seoDefaults.description,
+  inLanguage: "vi-VN",
+  url: seoDefaults.baseUrl,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Any",
+  permissions: "location",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
   },
-  description:
-    "Tạo mã QR chuyên nghiệp tức thì với các tuỳ chọn tuỳ chỉnh nâng cao: URL, vCard, WiFi, SMS, Email, Sự kiện, Vị trí và hơn thế nữa. Công cụ tạo mã QR miễn phí hỗ trợ xác thực vị trí.",
-  keywords: [
-    // Vietnamese primary keywords first for better local SEO
-    "tạo mã QR",
-    "trình tạo mã QR",
-    "tạo mã QR miễn phí",
-    "mã QR chuyên nghiệp",
-    "mã QR tuỳ chỉnh",
-    "mã QR vCard",
-    "mã QR WiFi",
-    "mã QR vị trí",
-    "mã QR có logo",
-    "mã QR sự kiện",
-    "mã QR SMS",
-    "mã QR email",
-    "Kaius FastQR",
-    "tạo QR code online",
-    "qr code cho doanh nghiệp",
-    // English (retain for bilingual reach)
-    "QR code generator",
-    "free QR code",
-    "professional QR generator",
-    "custom QR code",
-    "vCard QR code",
-    "WiFi QR code",
-    "location QR code",
-    "QR code with logo",
-    "business QR code",
-    "event QR code",
-    "SMS QR code",
-    "email QR code",
-    "online QR generator",
-    "mobile QR scanner",
+  author: {
+    "@type": "Person",
+    name: "Kaius",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Kaius",
+    logo: {
+      "@type": "ImageObject",
+      url: `${seoDefaults.baseUrl}/logo.png`,
+    },
+  },
+  featureList: [
+    "Tạo mã QR URL",
+    "Mã QR vCard (danh thiếp)",
+    "Mã QR WiFi",
+    "Mã QR SMS",
+    "Mã QR Email",
+    "Mã QR Sự kiện",
+    "Mã QR Vị trí",
+    "Tùy chỉnh màu sắc và kiểu dáng",
+    "Xác thực vị trí",
+    "Tải xuống chất lượng cao",
   ],
+  screenshot: `${seoDefaults.baseUrl}/screenshot.png`,
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL(seoDefaults.baseUrl),
+  title: {
+    default: seoDefaults.marketingTitle,
+    template: `%s | ${seoDefaults.siteName}`,
+  },
+  description: seoDefaults.description,
+  keywords: seoDefaults.keywords,
   authors: [{ name: "Kaius", url: "https://github.com/congthuc007" }],
   creator: "Kaius",
   publisher: "Kaius",
@@ -65,17 +76,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "vi_VN",
     alternateLocale: ["en_US"],
-    url: "https://fastqr.kaius.id.vn",
-    siteName: "Kaius FastQR",
-    title: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
-    description:
-      "Tạo mã QR chuyên nghiệp tức thì với tuỳ chỉnh nâng cao: URL, vCard, WiFi, SMS, Email, Sự kiện, Vị trí và hơn thế nữa.",
+    url: seoDefaults.baseUrl,
+    siteName: seoDefaults.siteName,
+    title: seoDefaults.marketingTitle,
+    description: seoDefaults.description,
     images: [
       {
-        url: "/og-image.png",
+        url: seoDefaults.ogImage,
         width: 1200,
         height: 630,
-        alt: "Kaius FastQR - Trình tạo mã QR chuyên nghiệp",
+        alt: seoDefaults.marketingTitle,
       },
     ],
   },
@@ -83,10 +93,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@kaius_dev",
     creator: "@kaius_dev",
-    title: "Kaius FastQR - Mã QR chuyên nghiệp",
-    description:
-      "Tạo mã QR miễn phí với tuỳ chỉnh nâng cao và xác thực vị trí. Hỗ trợ URL, vCard, WiFi, SMS, Email, Sự kiện.",
-    images: ["/og-image.png"],
+    title: seoDefaults.marketingTitle,
+    description: seoDefaults.description,
+    images: [seoDefaults.ogImage],
   },
   verification: {
     google: "your-google-verification-code",
@@ -94,10 +103,10 @@ export const metadata: Metadata = {
     yahoo: "your-yahoo-verification-code",
   },
   alternates: {
-    canonical: "https://fastqr.kaius.id.vn",
+    canonical: seoDefaults.canonical,
     languages: {
-      "vi-VN": "https://fastqr.kaius.id.vn/vi",
-      "en-US": "https://fastqr.kaius.id.vn/en",
+      "vi-VN": buildCanonicalUrl("/vi"),
+      "en-US": buildCanonicalUrl("/en"),
     },
   },
   category: "Technology",
@@ -108,7 +117,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://fastqr.kaius.id.vn"),
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -121,14 +129,14 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Kaius FastQR",
+    title: seoDefaults.siteName,
   },
-  applicationName: "Kaius FastQR",
+  applicationName: seoDefaults.siteName,
   generator: "Next.js",
   abstract: "Professional QR code generator with advanced customization and location verification features.",
-  archives: ["https://fastqr.kaius.id.vn/archive"],
-  assets: ["https://fastqr.kaius.id.vn/assets"],
-  bookmarks: ["https://fastqr.kaius.id.vn/bookmarks"],
+  archives: [`${seoDefaults.baseUrl}/archive`],
+  assets: [`${seoDefaults.baseUrl}/assets`],
+  bookmarks: [`${seoDefaults.baseUrl}/bookmarks`],
 }
 
 export default function RootLayout({
@@ -137,75 +145,32 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-  <html lang="vi" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning>
       <head>
-        {/* Additional SEO tags */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="manifest" href="/manifest.json" />
 
-        {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              name: "Kaius FastQR",
-              description: "Trình tạo mã QR chuyên nghiệp với các tuỳ chọn tuỳ chỉnh nâng cao",
-              inLanguage: "vi-VN",
-              url: "https://fastqr.kaius.id.vn",
-              applicationCategory: "BusinessApplication",
-              operatingSystem: "Any",
-              permissions: "location",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "USD",
-              },
-              author: {
-                "@type": "Person",
-                name: "Kaius",
-              },
-              publisher: {
-                "@type": "Organization",
-                name: "Kaius",
-                logo: {
-                  "@type": "ImageObject",
-                  url: "https://fastqr.kaius.id.vn/logo.png",
-                },
-              },
-              featureList: [
-                "Tạo mã QR URL",
-                "Mã QR vCard (danh thiếp)",
-                "Mã QR WiFi",
-                "Mã QR SMS",
-                "Mã QR Email",
-                "Mã QR Sự kiện",
-                "Mã QR Vị trí",
-                "Tuỳ chỉnh màu sắc và kiểu dáng",
-                "Xác thực vị trí",
-                "Tối ưu di động",
-              ],
-              screenshot: "https://fastqr.kaius.id.vn/screenshot.png",
-            }),
+            __html: JSON.stringify(structuredData),
           }}
         />
 
-        {/* Additional meta tags for better SEO */}
-        <meta property="og:site_name" content="Kaius FastQR" />
-        <meta name="application-name" content="Kaius FastQR" />
+        <meta name="site_name" content={seoDefaults.siteName} />
+        <meta property="og:site_name" content={seoDefaults.siteName} />
+        <meta name="application-name" content={seoDefaults.siteName} />
         <meta name="theme-color" content="#2563eb" />
         <meta name="msapplication-TileColor" content="#2563eb" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Kaius FastQR" />
+        <meta name="apple-mobile-web-app-title" content={seoDefaults.siteName} />
 
-        {/* Preload critical resources */}
         <link rel="preload" href="/logo.png" as="image" type="image/png" />
       </head>
       <body className={inter.className}>
@@ -216,3 +181,4 @@ export default function RootLayout({
     </html>
   )
 }
+

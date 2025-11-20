@@ -42,7 +42,7 @@ import {
 import QRCodeLib from "qrcode"
 import jsQR from "jsqr"
 import NextImage from "next/image"
-import { validateQRColors, suggestBetterColors } from "@/utils/color-validation"
+import { validateQRColors, suggestBetterColors, getContrastRatio } from "@/utils/color-validation"
 import { encodeToBase64 } from "@/utils/base64"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -81,6 +81,13 @@ interface QRCustomization {
   logoBgColor?: string
 }
 
+const normalizeHex = (value?: string) => (value ?? "").trim().toLowerCase()
+const colorsAreEqual = (a?: string, b?: string) => {
+  if (!a || !b) return false
+  return normalizeHex(a) === normalizeHex(b)
+}
+const MIN_LOGO_BORDER_CONTRAST = 3
+
 export default function QRGenerator() {
   const { t } = useLanguage()
   const [qrType, setQrType] = useState<QRType>("url")
@@ -101,7 +108,7 @@ export default function QRGenerator() {
     foregroundColor: "#000000",
     backgroundColor: "#FFFFFF",
     size: 300,
-    margin: 2,
+    margin: 4,
     errorCorrectionLevel: "M",
     dotStyle: "square",
     cornerStyle: "square",
@@ -143,6 +150,21 @@ export default function QRGenerator() {
   // Logo file state
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const logoContrastWithFg =
+    customization.logoBgColor && customization.foregroundColor
+      ? getContrastRatio(customization.logoBgColor, customization.foregroundColor)
+      : null
+  const logoContrastWithBg =
+    customization.logoBgColor && customization.backgroundColor
+      ? getContrastRatio(customization.logoBgColor, customization.backgroundColor)
+      : null
+  const hasLogoBorderConflict =
+    customization.logoEnabled &&
+    !!customization.logoBgColor &&
+    (colorsAreEqual(customization.logoBgColor, customization.foregroundColor) ||
+      colorsAreEqual(customization.logoBgColor, customization.backgroundColor) ||
+      (logoContrastWithFg !== null && logoContrastWithFg < MIN_LOGO_BORDER_CONTRAST) ||
+      (logoContrastWithBg !== null && logoContrastWithBg < MIN_LOGO_BORDER_CONTRAST))
   // QR Scanner state
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -509,6 +531,11 @@ END:VCALENDAR`
 
     if (requireLocation && !location) {
       setError(t("msg.allow_location_access"))
+      return
+    }
+
+    if (hasLogoBorderConflict) {
+      setError(t("msg.logo_border_conflict"))
       return
     }
 
@@ -1497,6 +1524,9 @@ END:VCALENDAR`
                             onChange={(e) => setCustomization({ ...customization, logoBgColor: e.target.value })}
                             className="h-10 w-24 p-1"
                           />
+                          {hasLogoBorderConflict && (
+                            <p className="text-xs text-destructive mt-1">{t("validation.logo_border_conflict")}</p>
+                          )}
                         </div>
 
                         <p className="text-xs text-muted-foreground">
