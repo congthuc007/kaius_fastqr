@@ -1,7 +1,7 @@
 const fallbackSiteName = "Kaius FastQR"
 const fallbackTagline = "Trình tạo mã QR chuyên nghiệp miễn phí trực tuyến"
 const fallbackDescription =
-  "Tạo mã QR chuyên nghiệp tức thì với các tùy chọn nâng cao như URL, vCard, WiFi, SMS, Email, Sự kiện và định vị. Công cụ hỗ trợ xác thực vị trí và tải xuống chất lượng cao."
+  "Tạo mã QR chuyên nghiệp miễn phí với các tùy chọn URL, vCard, WiFi, SMS, Email, Sự kiện, định vị. Hỗ trợ tùy chỉnh màu sắc, logo và tải xuống chất lượng cao."
 
 const sanitizeDomain = (value: string) =>
   value.replace(/^https?:\/\//i, "").replace(/\/.*$/, "").trim()
