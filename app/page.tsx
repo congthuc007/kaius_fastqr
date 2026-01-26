@@ -47,6 +47,11 @@ const QRGeneratorClient = dynamic(() => import("@/components/QRGeneratorClient")
 })
 
 export default function HomePage() {
-  return <QRGeneratorClient />
+  return (
+    <>
+      <h1 className="sr-only">{seoDefaults.marketingTitle}</h1>
+      <QRGeneratorClient />
+    </>
+  )
 }
 
