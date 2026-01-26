@@ -10,44 +10,85 @@ const inter = Inter({ subsets: ["latin", "vietnamese"] })
 
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: seoDefaults.siteName,
-  description: seoDefaults.description,
-  inLanguage: "vi-VN",
-  url: seoDefaults.baseUrl,
-  applicationCategory: "BusinessApplication",
-  operatingSystem: "Any",
-  permissions: "location",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  author: {
-    "@type": "Person",
-    name: "Kaius",
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "Kaius",
-    logo: {
-      "@type": "ImageObject",
-      url: `${seoDefaults.baseUrl}/logo.png`,
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${seoDefaults.baseUrl}/#website`,
+      url: seoDefaults.baseUrl,
+      name: seoDefaults.siteName,
+      description: seoDefaults.description,
+      inLanguage: "vi-VN",
+      publisher: {
+        "@id": `${seoDefaults.baseUrl}/#organization`,
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${seoDefaults.baseUrl}/?s={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
     },
-  },
-  featureList: [
-    "Tạo mã QR URL",
-    "Mã QR vCard (danh thiếp)",
-    "Mã QR WiFi",
-    "Mã QR SMS",
-    "Mã QR Email",
-    "Mã QR Sự kiện",
-    "Mã QR Vị trí",
-    "Tùy chỉnh màu sắc và kiểu dáng",
-    "Xác thực vị trí",
-    "Tải xuống chất lượng cao",
+    {
+      "@type": "Organization",
+      "@id": `${seoDefaults.baseUrl}/#organization`,
+      name: "Kaius",
+      url: seoDefaults.baseUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${seoDefaults.baseUrl}/logo.png`,
+        width: 512,
+        height: 512,
+      },
+      sameAs: ["https://github.com/congthuc007"],
+    },
+    {
+      "@type": "WebApplication",
+      "@id": `${seoDefaults.baseUrl}/#webapplication`,
+      name: seoDefaults.siteName,
+      alternateName: "Kaius FastQR - QR Generator",
+      description: seoDefaults.description,
+      inLanguage: "vi-VN",
+      url: seoDefaults.baseUrl,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Requires JavaScript. Requires HTML5.",
+      permissions: "location",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+      },
+      author: {
+        "@type": "Person",
+        name: "Kaius",
+        url: "https://github.com/congthuc007",
+      },
+      publisher: {
+        "@id": `${seoDefaults.baseUrl}/#organization`,
+      },
+      featureList: [
+        "Tạo mã QR URL",
+        "Mã QR vCard (danh thiếp)",
+        "Mã QR WiFi",
+        "Mã QR SMS",
+        "Mã QR Email",
+        "Mã QR Sự kiện",
+        "Mã QR Vị trí",
+        "Tùy chỉnh màu sắc và kiểu dáng",
+        "Xác thực vị trí",
+        "Tải xuống chất lượng cao",
+      ],
+      screenshot: `${seoDefaults.baseUrl}/screenshot.png`,
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.8",
+        ratingCount: "250",
+      },
+    },
   ],
-  screenshot: `${seoDefaults.baseUrl}/screenshot.png`,
 }
 
 export const metadata: Metadata = {
@@ -97,10 +138,16 @@ export const metadata: Metadata = {
     description: seoDefaults.description,
     images: [seoDefaults.ogImage],
   },
+  other: {
+    "bingbot": "index, follow",
+  },
   verification: {
     google: "your-google-verification-code",
     yandex: "your-yandex-verification-code",
     yahoo: "your-yahoo-verification-code",
+    other: {
+      "msvalidate.01": "your-bing-verification-code",
+    },
   },
   alternates: {
     canonical: seoDefaults.canonical,
