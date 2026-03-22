@@ -35,7 +35,7 @@ import {
   Target,
   Smartphone,
 } from "lucide-react"
-import { decodeFromBase64 } from "@/utils/base64"
+import { decodeFromBase64, encodeToBase64 } from "@/utils/base64"
 
 interface LocationData {
   latitude: number
@@ -49,6 +49,52 @@ interface QRData {
   requireLocation: boolean
   location?: LocationData
   timestamp?: string
+}
+
+interface MultiLinkEntry {
+  url: string
+  title?: string
+}
+
+const sanitizeMultiLinks = (value: unknown): MultiLinkEntry[] => {
+  if (!Array.isArray(value)) return []
+  const links: MultiLinkEntry[] = []
+  for (const item of value) {
+    if (!item || typeof item !== "object") continue
+    const maybeUrl = "url" in item ? String(item.url).trim() : ""
+    if (!maybeUrl) continue
+    const maybeTitle = "title" in item ? String(item.title).trim() : ""
+    links.push({
+      url: maybeUrl,
+      ...(maybeTitle ? { title: maybeTitle } : {}),
+    })
+  }
+  return links
+}
+
+const extractMultiLinksFromContent = (content: string): MultiLinkEntry[] => {
+  try {
+    const parsed = JSON.parse(content)
+    if (parsed && typeof parsed === "object" && "links" in parsed) {
+      return sanitizeMultiLinks((parsed as { links?: unknown }).links)
+    }
+  } catch {
+    // ignore
+  }
+
+  try {
+    const url = new URL(content)
+    const dataParam = url.searchParams.get("data")
+    if (!dataParam) return []
+    const decoded = JSON.parse(decodeFromBase64(dataParam))
+    if (decoded && typeof decoded === "object" && "links" in decoded) {
+      return sanitizeMultiLinks((decoded as { links?: unknown }).links)
+    }
+  } catch {
+    // ignore
+  }
+
+  return []
 }
 
 // Tính khoảng cách giữa 2 điểm (Haversine formula)
@@ -74,6 +120,7 @@ function VerifyLocationContent() {
   const [isVerified, setIsVerified] = useState(false)
   const [distance, setDistance] = useState<number | null>(null)
   const [qrData, setQrData] = useState<QRData | null>(null)
+  const previewMultiLinks = qrData?.type === "multiurl" ? extractMultiLinksFromContent(qrData.content) : []
 
   // Khoảng cách cho phép (mét)
   const ALLOWED_DISTANCE = 100
@@ -193,6 +240,12 @@ function VerifyLocationContent() {
         case "url":
           window.open(qrData.content, "_blank")
           break
+        case "email":
+          window.location.href = qrData.content
+          break
+        case "phone":
+          window.location.href = qrData.content
+          break
         case "text":
           navigator.clipboard.writeText(qrData.content)
           alert(t("verify.content_copied"))
@@ -219,6 +272,9 @@ function VerifyLocationContent() {
           alert(t("verify.wifi_info") + "\n" + qrData.content)
           break
         case "location":
+          window.open(qrData.content, "_blank")
+          break
+        case "facebook":
           window.open(qrData.content, "_blank")
           break
         case "payment":
@@ -249,15 +305,20 @@ function VerifyLocationContent() {
           fileLink.click()
           break
         case "multiurl":
+          if (qrData.content.startsWith("http://") || qrData.content.startsWith("https://")) {
+            window.open(qrData.content, "_blank")
+            break
+          }
           try {
-            const parsed = JSON.parse(qrData.content)
-            if (Array.isArray(parsed.links) && parsed.links.length > 0) {
-              // Open first link automatically; rest are shown in UI list
-              window.open(parsed.links[0].url, "_blank")
-            } else {
+            const links = extractMultiLinksFromContent(qrData.content)
+            if (!links.length) {
               alert(t("verify.unsupported_qr"))
+              break
             }
-          } catch (e) {
+            const linksUrl = new URL(`${window.location.origin}/links`)
+            linksUrl.searchParams.append("data", encodeToBase64(JSON.stringify({ links })))
+            window.open(linksUrl.toString(), "_blank")
+          } catch {
             alert(t("verify.unsupported_qr"))
           }
           break
@@ -376,18 +437,11 @@ function VerifyLocationContent() {
                     </div>
                   )}
                   {qrData.type === "multiurl" && (() => {
-                    let links: { url: string; title?: string }[] = []
-                    try {
-                      const parsed = JSON.parse(qrData.content)
-                      if (Array.isArray(parsed.links)) links = parsed.links
-                    } catch (e) {
-                      // ignore parse error
-                    }
                     return (
                       <div className="space-y-2">
                         <div className="text-sm font-medium">{t("verify.multi_links")}</div>
                         <ul className="space-y-1">
-                          {links.map((l, i) => (
+                          {previewMultiLinks.map((l, i) => (
                             <li key={i} className="text-sm flex items-center gap-2">
                               <span className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground">{i + 1}</span>
                               <a
@@ -400,7 +454,7 @@ function VerifyLocationContent() {
                               </a>
                             </li>
                           ))}
-                          {links.length === 0 && (
+                          {previewMultiLinks.length === 0 && (
                             <li className="text-xs text-muted-foreground">{t("verify.invalid_multi_links")}</li>
                           )}
                         </ul>

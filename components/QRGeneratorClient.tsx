@@ -42,7 +42,7 @@ import {
 import QRCodeLib from "qrcode"
 import jsQR from "jsqr"
 import NextImage from "next/image"
-import { validateQRColors, suggestBetterColors, getContrastRatio } from "@/utils/color-validation"
+import { getContrastRatio } from "@/utils/color-validation"
 import { encodeToBase64 } from "@/utils/base64"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -76,17 +76,30 @@ interface QRCustomization {
   // Logo customization
   logoEnabled?: boolean
   logoSize?: number // percentage of QR size
-  logoPadding?: number // padding around logo box in px
   logoRound?: boolean
-  logoBgColor?: string
 }
 
-const normalizeHex = (value?: string) => (value ?? "").trim().toLowerCase()
-const colorsAreEqual = (a?: string, b?: string) => {
-  if (!a || !b) return false
-  return normalizeHex(a) === normalizeHex(b)
+interface QRColorPreset {
+  id: string
+  nameKey: string
+  foreground: string
+  background: string
 }
-const MIN_LOGO_BORDER_CONTRAST = 3
+
+const QR_COLOR_PRESETS: QRColorPreset[] = [
+  { id: "black-white", nameKey: "preset.black_white", foreground: "#111827", background: "#FFFFFF" },
+  { id: "blue-white", nameKey: "preset.blue_white", foreground: "#1E3A8A", background: "#FFFFFF" },
+  { id: "charcoal-ivory", nameKey: "preset.white_black", foreground: "#1F2937", background: "#FFFBEB" },
+  { id: "burnt-orange-white", nameKey: "preset.orange_black", foreground: "#9A3412", background: "#FFFFFF" },
+  { id: "purple-white", nameKey: "preset.purple_white", foreground: "#4C1D95", background: "#FFFFFF" },
+  { id: "green-white", nameKey: "preset.green_white", foreground: "#14532D", background: "#F0FDF4" },
+]
+const DEFAULT_QR_COLOR_PRESET = QR_COLOR_PRESETS[0]
+const SAFE_LOGO_SIZE_DEFAULT = 20
+const SAFE_LOGO_SIZE_MIN = 12
+const SAFE_LOGO_SIZE_MAX = 24
+const SAFE_LOGO_PADDING_PX = 0
+const SAFE_LOGO_BORDER_PX = 5
 
 export default function QRGenerator() {
   const { t } = useLanguage()
@@ -97,26 +110,22 @@ export default function QRGenerator() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [locationError, setLocationError] = useState("")
-  const [colorValidation, setColorValidation] = useState<{
-    isValid: boolean
-    warning: string | null
-    severity: "error" | "warning" | null
-  }>({ isValid: true, warning: null, severity: null })
+  const [selectedColorPresetId, setSelectedColorPresetId] = useState<string>(DEFAULT_QR_COLOR_PRESET.id)
+  const selectedColorPreset =
+    QR_COLOR_PRESETS.find((preset) => preset.id === selectedColorPresetId) ?? DEFAULT_QR_COLOR_PRESET
 
   // QR Customization
   const [customization, setCustomization] = useState<QRCustomization>({
-    foregroundColor: "#000000",
-    backgroundColor: "#FFFFFF",
+    foregroundColor: DEFAULT_QR_COLOR_PRESET.foreground,
+    backgroundColor: DEFAULT_QR_COLOR_PRESET.background,
     size: 300,
     margin: 4,
     errorCorrectionLevel: "M",
     dotStyle: "square",
     cornerStyle: "square",
     logoEnabled: false,
-    logoSize: 20,
-    logoPadding: 8,
+    logoSize: SAFE_LOGO_SIZE_DEFAULT,
     logoRound: true,
-    logoBgColor: "#FFFFFF",
   })
 
   // Form data cho các loại QR khác nhau
@@ -150,25 +159,13 @@ export default function QRGenerator() {
   // Logo file state
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
-  const logoContrastWithFg =
-    customization.logoBgColor && customization.foregroundColor
-      ? getContrastRatio(customization.logoBgColor, customization.foregroundColor)
-      : null
-  const logoContrastWithBg =
-    customization.logoBgColor && customization.backgroundColor
-      ? getContrastRatio(customization.logoBgColor, customization.backgroundColor)
-      : null
-  const hasLogoBorderConflict =
-    customization.logoEnabled &&
-    !!customization.logoBgColor &&
-    (colorsAreEqual(customization.logoBgColor, customization.foregroundColor) ||
-      colorsAreEqual(customization.logoBgColor, customization.backgroundColor) ||
-      (logoContrastWithFg !== null && logoContrastWithFg < MIN_LOGO_BORDER_CONTRAST) ||
-      (logoContrastWithBg !== null && logoContrastWithBg < MIN_LOGO_BORDER_CONTRAST))
+  const activeForegroundColor = selectedColorPreset.foreground
+  const activeBackgroundColor = selectedColorPreset.background
   // QR Scanner state
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const logoFileInputRef = useRef<HTMLInputElement | null>(null)
   const animationFrameRef = useRef<number | null>(null)
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   const [isScanning, setIsScanning] = useState(false)
@@ -225,10 +222,16 @@ export default function QRGenerator() {
     }
   }, [requireLocation])
 
-  useEffect(() => {
-    const validation = validateQRColors(customization.foregroundColor, customization.backgroundColor, t)
-    setColorValidation(validation)
-  }, [customization.foregroundColor, customization.backgroundColor, t])
+  const applyColorPreset = (presetId: string) => {
+    const preset = QR_COLOR_PRESETS.find((item) => item.id === presetId)
+    if (!preset) return
+    setSelectedColorPresetId(preset.id)
+    setCustomization((prev) => ({
+      ...prev,
+      foregroundColor: preset.foreground,
+      backgroundColor: preset.background,
+    }))
+  }
 
   const stopCameraScan = () => {
     if (animationFrameRef.current) {
@@ -345,6 +348,20 @@ export default function QRGenerator() {
     }
   }
 
+  const handleLogoUpload = (file: File | null) => {
+    setLogoFile(file)
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (ev) => setLogoPreview(ev.target?.result as string)
+      reader.readAsDataURL(file)
+    } else {
+      setLogoPreview(null)
+    }
+    if (logoFileInputRef.current) {
+      logoFileInputRef.current.value = ""
+    }
+  }
+
   const clearScanResult = () => {
     setScanResult("")
     setScanMessage("")
@@ -373,6 +390,10 @@ export default function QRGenerator() {
 
   const triggerImageUpload = () => {
     fileInputRef.current?.click()
+  }
+
+  const triggerLogoUpload = () => {
+    logoFileInputRef.current?.click()
   }
 
   const handleCameraButtonClick = () => {
@@ -524,18 +545,8 @@ END:VCALENDAR`
       return
     }
 
-    if (!colorValidation.isValid) {
-      setError(t("msg.invalid_colors"))
-      return
-    }
-
     if (requireLocation && !location) {
       setError(t("msg.allow_location_access"))
-      return
-    }
-
-    if (hasLogoBorderConflict) {
-      setError(t("msg.logo_border_conflict"))
       return
     }
 
@@ -581,10 +592,10 @@ END:VCALENDAR`
         width: customization.size,
         margin: customization.margin,
         color: {
-          dark: customization.foregroundColor,
-          light: customization.backgroundColor,
+          dark: activeForegroundColor,
+          light: activeBackgroundColor,
         },
-        errorCorrectionLevel: customization.errorCorrectionLevel,
+        errorCorrectionLevel: customization.logoEnabled ? "H" : customization.errorCorrectionLevel,
       })
       // Compose logo overlay if enabled
       let finalDataUrl = qrCodeDataUrl
@@ -621,6 +632,9 @@ END:VCALENDAR`
     setError("")
     setLogoFile(null)
     setLogoPreview(null)
+    if (logoFileInputRef.current) {
+      logoFileInputRef.current.value = ""
+    }
     // Reset form data based on type
     switch (qrType) {
       case "url":
@@ -677,26 +691,33 @@ END:VCALENDAR`
         const logoImg = document.createElement("img")
         logoImg.crossOrigin = "anonymous"
         logoImg.onload = () => {
-          const sizePct = customization.logoSize || 20
+          const sizePct = Math.min(
+            SAFE_LOGO_SIZE_MAX,
+            Math.max(SAFE_LOGO_SIZE_MIN, customization.logoSize || SAFE_LOGO_SIZE_DEFAULT),
+          )
           const logoBoxSize = Math.round((sizePct / 100) * qrImg.width)
-          const padding = customization.logoPadding || 0
-          const totalBoxSize = logoBoxSize + padding * 2
+          const padding = SAFE_LOGO_PADDING_PX
+          const borderWidth = SAFE_LOGO_BORDER_PX
+          const totalInset = padding + borderWidth
+          const totalBoxSize = logoBoxSize + totalInset * 2
           const x = (qrImg.width - totalBoxSize) / 2
           const y = (qrImg.height - totalBoxSize) / 2
 
-          // Draw background container so circular logos remain true circles
+          // Safe guard ring: fixed border only (no background fill), colored by the active QR palette.
           ctx.save()
-          ctx.fillStyle = customization.logoBgColor || "#FFFFFF"
+          const centerX = x + totalBoxSize / 2
+          const centerY = y + totalBoxSize / 2
+          ctx.strokeStyle = activeForegroundColor
+          ctx.lineWidth = borderWidth
           if (customization.logoRound) {
-            const centerX = x + totalBoxSize / 2
-            const centerY = y + totalBoxSize / 2
-            const radius = totalBoxSize / 2
+            const radius = totalBoxSize / 2 - borderWidth / 2
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
             ctx.closePath()
-            ctx.fill()
+            ctx.stroke()
           } else {
-            ctx.fillRect(x, y, totalBoxSize, totalBoxSize)
+            const half = borderWidth / 2
+            ctx.strokeRect(x + half, y + half, totalBoxSize - borderWidth, totalBoxSize - borderWidth)
           }
           ctx.restore()
 
@@ -706,16 +727,14 @@ END:VCALENDAR`
           const squareSourceSize = Math.min(naturalWidth, naturalHeight)
           const sourceX = naturalWidth > naturalHeight ? (naturalWidth - naturalHeight) / 2 : 0
           const sourceY = naturalHeight > naturalWidth ? (naturalHeight - naturalWidth) / 2 : 0
-          const drawX = x + padding
-          const drawY = y + padding
+          const drawX = x + totalInset
+          const drawY = y + totalInset
 
           if (customization.logoRound) {
             ctx.save()
             const clipRadius = logoBoxSize / 2
-            const clipCenterX = x + totalBoxSize / 2
-            const clipCenterY = y + totalBoxSize / 2
             ctx.beginPath()
-            ctx.arc(clipCenterX, clipCenterY, clipRadius, 0, Math.PI * 2)
+            ctx.arc(centerX, centerY, clipRadius, 0, Math.PI * 2)
             ctx.closePath()
             ctx.clip()
             ctx.drawImage(
@@ -1281,74 +1300,33 @@ END:VCALENDAR`
                     <Label className="text-base font-medium">{t("custom.title")}</Label>
                   </div>
 
-                  {/* Color Validation Alert */}
-                  {colorValidation.warning && (
-                    <Alert variant={colorValidation.severity === "error" ? "destructive" : "default"}>
-                      <AlertDescription className="flex items-center justify-between">
-                        <span>{colorValidation.warning}</span>
-                        {colorValidation.severity === "error" && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">{t("custom.color_presets")}</Label>
+                    <p className="text-xs text-muted-foreground">{t("custom.safe_palette_notice")}</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {QR_COLOR_PRESETS.map((preset) => {
+                        const isSelected = selectedColorPreset.id === preset.id
+                        const contrast = getContrastRatio(preset.foreground, preset.background).toFixed(1)
+                        return (
                           <Button
+                            key={preset.id}
+                            variant={isSelected ? "default" : "outline"}
                             size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              const suggested = suggestBetterColors(
-                                customization.foregroundColor,
-                                customization.backgroundColor,
-                              )
-                              setCustomization({
-                                ...customization,
-                                foregroundColor: suggested.foreground,
-                                backgroundColor: suggested.background,
-                              })
-                            }}
+                            onClick={() => applyColorPreset(preset.id)}
+                            className="text-xs"
                           >
-                            {t("btn.auto_fix")}
+                            <div className="flex items-center gap-1 mr-2">
+                              <div className="w-3 h-3 rounded border" style={{ backgroundColor: preset.foreground }} />
+                              <div className="w-3 h-3 rounded border" style={{ backgroundColor: preset.background }} />
+                            </div>
+                            {t(preset.nameKey)} ({contrast}:1)
                           </Button>
-                        )}
-                      </AlertDescription>
-                    </Alert>
-                  )}
+                        )
+                      })}
+                    </div>
+                  </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Colors */}
-                    <div>
-                      <Label htmlFor="foreground-color">{t("custom.foreground")}</Label>
-                      <div className="flex gap-2 mt-1">
-                        <Input
-                          id="foreground-color"
-                          type="color"
-                          value={customization.foregroundColor}
-                          onChange={(e) => setCustomization({ ...customization, foregroundColor: e.target.value })}
-                          className="w-16 h-10 p-1 border rounded"
-                        />
-                        <Input
-                          type="text"
-                          value={customization.foregroundColor}
-                          onChange={(e) => setCustomization({ ...customization, foregroundColor: e.target.value })}
-                          className="flex-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="background-color">{t("custom.background")}</Label>
-                      <div className="flex gap-2 mt-1">
-                        <Input
-                          id="background-color"
-                          type="color"
-                          value={customization.backgroundColor}
-                          onChange={(e) => setCustomization({ ...customization, backgroundColor: e.target.value })}
-                          className="w-16 h-10 p-1 border rounded"
-                        />
-                        <Input
-                          type="text"
-                          value={customization.backgroundColor}
-                          onChange={(e) => setCustomization({ ...customization, backgroundColor: e.target.value })}
-                          className="flex-1"
-                        />
-                      </div>
-                    </div>
-
                     {/* Size and Margin */}
                     <div>
                       <Label htmlFor="size">
@@ -1401,41 +1379,6 @@ END:VCALENDAR`
                     </div>
                   </div>
 
-                  {/* Color Presets */}
-                  <div>
-                    <Label className="text-sm font-medium">{t("custom.color_presets")}</Label>
-                    <div className="flex gap-2 mt-2 flex-wrap">
-                      {[
-                        { name: t("preset.black_white"), fg: "#000000", bg: "#FFFFFF" },
-                        { name: t("preset.blue_white"), fg: "#1d4ed8", bg: "#FFFFFF" },
-                        { name: t("preset.white_black"), fg: "#FFFFFF", bg: "#000000" },
-                        { name: t("preset.orange_black"), fg: "#f97316", bg: "#000000" },
-                        { name: t("preset.purple_white"), fg: "#7c3aed", bg: "#FFFFFF" },
-                        { name: t("preset.green_white"), fg: "#16a34a", bg: "#FFFFFF" },
-                      ].map((preset) => (
-                        <Button
-                          key={preset.name}
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setCustomization({
-                              ...customization,
-                              foregroundColor: preset.fg,
-                              backgroundColor: preset.bg,
-                            })
-                          }
-                          className="text-xs"
-                        >
-                          <div
-                            className="w-3 h-3 rounded mr-1 border"
-                            style={{ backgroundColor: preset.fg, borderColor: preset.bg }}
-                          />
-                          {preset.name}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Logo Overlay */}
                   <div className="mt-4 border rounded-md p-4 space-y-4">
                     <div className="flex items-center justify-between">
@@ -1449,21 +1392,26 @@ END:VCALENDAR`
                       <div className="space-y-3">
                         <div className="flex flex-col gap-2">
                           <Label>{t("custom.logo_file")}</Label>
-                          <Input
+                          <input
+                            ref={logoFileInputRef}
                             type="file"
                             accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0] || null
-                              setLogoFile(file)
-                              if (file) {
-                                const reader = new FileReader()
-                                reader.onload = (ev) => setLogoPreview(ev.target?.result as string)
-                                reader.readAsDataURL(file)
-                              } else {
-                                setLogoPreview(null)
-                              }
-                            }}
+                            className="hidden"
+                            onChange={(e) => handleLogoUpload(e.target.files?.[0] || null)}
                           />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={triggerLogoUpload}
+                            className="h-12 w-full justify-center gap-2 border-2 border-dashed border-primary/50 bg-primary/5 font-semibold text-primary hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Upload className="h-5 w-5" />
+                            {t("custom.choose_logo_file")}
+                          </Button>
+                          <p className="text-xs text-muted-foreground">{t("custom.logo_upload_hint")}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {logoFile?.name ? `${t("custom.selected_file")}: ${logoFile.name}` : t("custom.no_file_selected")}
+                          </p>
                           {logoPreview && (
                             <div className="flex items-center gap-4">
                               <div className="h-16 w-16 rounded border overflow-hidden">
@@ -1473,8 +1421,7 @@ END:VCALENDAR`
                                 variant="outline"
                                 type="button"
                                 onClick={() => {
-                                  setLogoFile(null)
-                                  setLogoPreview(null)
+                                  handleLogoUpload(null)
                                 }}
                               >
                                 {t("custom.remove_logo")}
@@ -1488,23 +1435,10 @@ END:VCALENDAR`
                             {t("custom.logo_size")}: {customization.logoSize}%
                           </Label>
                           <Slider
-                            value={[customization.logoSize || 20]}
+                            value={[customization.logoSize || SAFE_LOGO_SIZE_DEFAULT]}
                             onValueChange={(v) => setCustomization({ ...customization, logoSize: v[0] })}
-                            min={10}
-                            max={35}
-                            step={1}
-                          />
-                        </div>
-
-                        <div>
-                          <Label>
-                            {t("custom.logo_padding")}: {customization.logoPadding}px
-                          </Label>
-                          <Slider
-                            value={[customization.logoPadding || 8]}
-                            onValueChange={(v) => setCustomization({ ...customization, logoPadding: v[0] })}
-                            min={0}
-                            max={24}
+                            min={SAFE_LOGO_SIZE_MIN}
+                            max={SAFE_LOGO_SIZE_MAX}
                             step={1}
                           />
                         </div>
@@ -1517,17 +1451,13 @@ END:VCALENDAR`
                           <Label>{t("custom.logo_round")}</Label>
                         </div>
 
-                        <div>
-                          <Label>{t("custom.logo_bg")}</Label>
-                          <Input
-                            type="color"
-                            value={customization.logoBgColor}
-                            onChange={(e) => setCustomization({ ...customization, logoBgColor: e.target.value })}
-                            className="h-10 w-24 p-1"
-                          />
-                          {hasLogoBorderConflict && (
-                            <p className="text-xs text-destructive mt-1">{t("validation.logo_border_conflict")}</p>
-                          )}
+                        <div className="rounded-md border p-3 bg-muted/30 space-y-2">
+                          <p className="text-xs text-muted-foreground">{t("custom.logo_safety_lock")}</p>
+                          <p className="text-xs text-muted-foreground">{t("custom.logo_ec_notice")}</p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>{t("custom.logo_border_preview")}</span>
+                            <div className="w-4 h-4 rounded border" style={{ backgroundColor: activeForegroundColor }} />
+                          </div>
                         </div>
 
                         <p className="text-xs text-muted-foreground">
@@ -1664,13 +1594,18 @@ END:VCALENDAR`
                           {isScanning || cameraStream ? <StopCircle className="h-4 w-4" /> : <Camera className="h-4 w-4" />}
                         </Button>
                         <Button
-                          size="icon"
                           variant="outline"
                           onClick={triggerImageUpload}
                           disabled={isDecodingImage}
                           aria-label={t("scan.upload_label")}
+                          className="gap-2"
                         >
-                          {isDecodingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          {isDecodingImage ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Upload className="h-4 w-4" />
+                          )}
+                          <span>{t("scan.upload_label")}</span>
                         </Button>
                         <input
                           ref={fileInputRef}

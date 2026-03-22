@@ -74,6 +74,7 @@ const translations = {
     "custom.dot_style": "Dot Style",
     "custom.corner_style": "Corner Style",
     "custom.color_presets": "Color Presets",
+    "custom.safe_palette_notice": "Color is limited to tested high-contrast pairs for reliable QR scanning.",
   "custom.logo_section": "Logo Overlay",
   "custom.add_logo": "Add logo in the center",
   "custom.logo_size": "Logo size",
@@ -81,7 +82,15 @@ const translations = {
   "custom.logo_round": "Rounded logo background",
   "custom.logo_bg": "Logo background color",
   "custom.logo_file": "Logo image",
+  "custom.choose_logo_file": "Choose logo file",
+  "custom.logo_upload_hint": "PNG, JPG or WebP. Recommended square logo.",
+  "custom.selected_file": "Selected file",
+  "custom.no_file_selected": "No file selected",
   "custom.remove_logo": "Remove logo",
+  "custom.logo_safety_lock":
+    "Only a fixed border is applied around the logo for scan safety. No background fill is added.",
+  "custom.logo_ec_notice": "When logo is enabled, QR error correction is automatically set to High (30%).",
+  "custom.logo_border_preview": "Fixed border color:",
 
     // Dot Styles
     "dot.square": "Square",
@@ -103,8 +112,8 @@ const translations = {
     // Color Presets
     "preset.black_white": "Black & White",
     "preset.blue_white": "Blue & White",
-    "preset.white_black": "White & Black",
-    "preset.orange_black": "Orange & Black",
+    "preset.white_black": "Charcoal & Ivory",
+    "preset.orange_black": "Burnt Orange & White",
     "preset.purple_white": "Purple & White",
     "preset.green_white": "Green & White",
 
@@ -351,6 +360,7 @@ const translations = {
     "custom.dot_style": "Kiểu chấm",
     "custom.corner_style": "Kiểu góc",
     "custom.color_presets": "Cài đặt trước màu",
+    "custom.safe_palette_notice": "Màu được giới hạn trong các cặp tương phản cao đã kiểm thử để đảm bảo quét ổn định.",
   "custom.logo_section": "Lớp phủ biểu trưng",
   "custom.add_logo": "Thêm logo ở giữa",
   "custom.logo_size": "Kích thước biểu tượng",
@@ -358,7 +368,15 @@ const translations = {
   "custom.logo_round": "Nền logo tròn",
   "custom.logo_bg": "Màu nền logo",
   "custom.logo_file": "Hình ảnh biểu tượng",
+  "custom.choose_logo_file": "Chọn tệp logo",
+  "custom.logo_upload_hint": "Hỗ trợ PNG, JPG hoặc WebP. Khuyến nghị logo hình vuông.",
+  "custom.selected_file": "Tệp đã chọn",
+  "custom.no_file_selected": "Chưa chọn tệp",
   "custom.remove_logo": "Xóa biểu tượng",
+  "custom.logo_safety_lock":
+    "Chỉ áp dụng viền cố định quanh logo để đảm bảo khả năng quét, không tô nền bên trong.",
+  "custom.logo_ec_notice": "Khi bật logo, mức sửa lỗi QR sẽ tự động chuyển sang Cao (30%).",
+  "custom.logo_border_preview": "Màu viền cố định:",
 
     // Dot Styles
     "dot.square": "Quảng trường",
@@ -380,8 +398,8 @@ const translations = {
     // Color Presets
     "preset.black_white": "Đen trắng",
     "preset.blue_white": "Xanh & Trắng",
-    "preset.white_black": "Trắng & Đen",
-    "preset.orange_black": "Cam & Đen",
+    "preset.white_black": "Than chì & Ngà",
+    "preset.orange_black": "Cam đất & Trắng",
     "preset.purple_white": "Tím & Trắng",
     "preset.green_white": "Xanh & Trắng",
 
