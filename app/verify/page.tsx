@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -161,7 +161,7 @@ function VerifyLocationContent() {
     }
   }, [searchParams, t])
 
-  const getCurrentLocation = () => {
+  const getCurrentLocation = useCallback(() => {
     setIsLoading(true)
     setError("")
 
@@ -231,7 +231,7 @@ function VerifyLocationContent() {
         maximumAge: 60000,
       },
     )
-  }
+  }, [qrData, t])
 
   const handleAccess = () => {
     if (isVerified && qrData) {
@@ -335,7 +335,7 @@ function VerifyLocationContent() {
     } else if (qrData && !qrData.requireLocation) {
       setIsVerified(true)
     }
-  }, [qrData])
+  }, [qrData, currentLocation, getCurrentLocation])
 
   if (!qrData) {
     return (
@@ -701,7 +701,7 @@ function VerifyLocationContent() {
                     <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-medium">No Data Storage</p>
-                      <p className="text-muted-foreground text-xs">We don't store your personal information</p>
+                      <p className="text-muted-foreground text-xs">We don&apos;t store your personal information</p>
                     </div>
                   </div>
                 </CardContent>
