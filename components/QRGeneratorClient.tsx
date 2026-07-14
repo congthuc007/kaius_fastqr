@@ -831,7 +831,7 @@ END:VCALENDAR`
                 <div className="space-y-4">
                   <Label className="text-base font-medium">{t("form.qr_type")}</Label>
                   <Tabs value={qrType} onValueChange={(value) => setQrType(value as QRType)} className="w-full">
-                    <TabsList className="grid grid-cols-5 lg:grid-cols-11 h-auto gap-1 p-1">
+                    <TabsList className="flex lg:grid h-auto w-full overflow-x-auto lg:overflow-visible lg:grid-cols-11 custom-scrollbar gap-1 p-1 justify-start">
                       {Object.entries({
                         url: t("qr.url"),
                         text: t("qr.text"),
@@ -850,10 +850,10 @@ END:VCALENDAR`
                           <TabsTrigger
                             key={type}
                             value={type}
-                            className="flex flex-col gap-1 p-3 text-xs min-h-[60px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                            className="flex flex-col gap-1 p-3 text-xs min-h-[60px] min-w-[72px] lg:min-w-0 flex-shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                           >
                             <Icon className="h-4 w-4" />
-                            <span className="leading-tight">{label}</span>
+                            <span className="leading-tight whitespace-nowrap">{label}</span>
                           </TabsTrigger>
                         )
                       })}
