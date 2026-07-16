@@ -178,7 +178,7 @@ Script sẽ tự động đọc phần ngôn ngữ `en`, thực hiện dịch qu
 ---
 
 ## 📄 Giấy Phép
-Dự án được bảo hộ bởi bản quyền của **Kaius Inc**. Mọi quyền được bảo lưu.
+Dự án được phát hành mã nguồn mở dưới giấy phép **MIT License**. Bạn có thể tự do học tập, sử dụng và tùy biến.
 
 ---
-*Phát triển bởi đội ngũ công nghệ tại Kaius Inc.*
+*Phát triển bởi Nguyễn Công Thức (Kaius).*
