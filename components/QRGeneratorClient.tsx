@@ -2,7 +2,7 @@
 
 import React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -176,7 +176,7 @@ export default function QRGenerator() {
   const [scannerOpen, setScannerOpen] = useState(false)
 
   // Lấy vị trí hiện tại
-  const getCurrentLocation = () => {
+  const getCurrentLocation = useCallback(() => {
     setLocationError("")
     if (!navigator.geolocation) {
       setLocationError("Browser doesn't support geolocation")
@@ -213,14 +213,14 @@ export default function QRGenerator() {
         maximumAge: 60000,
       },
     )
-  }
+  }, [t])
 
   // Tự động lấy vị trí khi bật yêu cầu định vị
   useEffect(() => {
     if (requireLocation && !location) {
       getCurrentLocation()
     }
-  }, [requireLocation])
+  }, [requireLocation, location, getCurrentLocation])
 
   const applyColorPreset = (presetId: string) => {
     const preset = QR_COLOR_PRESETS.find((item) => item.id === presetId)
@@ -233,7 +233,7 @@ export default function QRGenerator() {
     }))
   }
 
-  const stopCameraScan = () => {
+  const stopCameraScan = useCallback(() => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current)
       animationFrameRef.current = null
@@ -246,7 +246,7 @@ export default function QRGenerator() {
       videoRef.current.srcObject = null
     }
     setIsScanning(false)
-  }
+  }, [cameraStream])
 
   const scanFrame = () => {
     if (!videoRef.current || !canvasRef.current) return
@@ -416,13 +416,13 @@ export default function QRGenerator() {
     } else {
       stopCameraScan()
     }
-  }, [scannerOpen])
+  }, [scannerOpen, stopCameraScan])
 
   useEffect(() => {
     return () => {
       stopCameraScan()
     }
-  }, [])
+  }, [stopCameraScan])
 
   // Tạo nội dung QR dựa trên loại
   const generateQRContent = (): string => {
@@ -1415,6 +1415,7 @@ END:VCALENDAR`
                           {logoPreview && (
                             <div className="flex items-center gap-4">
                               <div className="h-16 w-16 rounded border overflow-hidden">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={logoPreview} alt="logo" className="h-full w-full object-cover" />
                               </div>
                               <Button
