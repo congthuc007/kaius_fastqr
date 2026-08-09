@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.0.0",
   "engines": {
-    "node": ">=20 <21"
+    "node": ">=20"
   },
   "scripts": {
     "build": "next build",
@@ -54,7 +54,7 @@
     "input-otp": "1.4.1",
     "jsqr": "^1.4.0",
     "lucide-react": "^0.454.0",
-    "next": "14.2.16",
+    "next": "^14.2.24",
     "next-themes": "latest",
     "qrcode": "latest",
     "react": "^18",
@@ -70,11 +70,11 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.16",
+    "eslint-config-next": "^14.2.24",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
