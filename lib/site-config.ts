@@ -1,7 +1,7 @@
 const fallbackSiteName = "Kaius FastQR"
-const fallbackTagline = "Trình tạo mã QR chuyên nghiệp miễn phí trực tuyến"
+const fallbackTagline = "Trình Tạo & Quét Mã QR Code Chuyên Nghiệp Miễn Phí"
 const fallbackDescription =
-  "Tạo mã QR chuyên nghiệp miễn phí với các tùy chọn URL, vCard, WiFi, SMS, Email, Sự kiện, định vị. Hỗ trợ tùy chỉnh màu sắc, logo và tải xuống chất lượng cao."
+  "Trình tạo và quét mã QR Code chuyên nghiệp miễn phí trực tuyến. Hỗ trợ tạo mã QR URL, vCard danh bạ, WiFi, GPS vị trí khóa (Geo-lock), SMS, Email, Sự kiện, Facebook, Multi-Link. Tùy chỉnh màu sắc, chèn logo cá nhân, kiểm tra tương phản chuẩn WCAG, tải xuống ảnh chất lượng cao không bao giờ hết hạn."
 
 const sanitizeDomain = (value: string) =>
   value.replace(/^https?:\/\//i, "").replace(/\/.*$/, "").trim()
@@ -32,33 +32,33 @@ export const seoDefaults = {
   description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() || fallbackDescription,
   keywords: [
     "tạo mã QR",
-    "trình tạo mã QR",
+    "tạo mã QR code online",
     "tạo mã QR miễn phí",
-    "mã QR chuyên nghiệp",
-    "mã QR tùy chỉnh",
-    "mã QR vCard",
-    "mã QR WiFi",
-    "mã QR vị trí",
-    "mã QR có logo",
-    "mã QR sự kiện",
-    "mã QR SMS",
-    "mã QR email",
+    "trình tạo mã QR chuyên nghiệp",
+    "tạo mã QR có logo",
+    "tạo mã QR wifi",
+    "mã QR vCard danh bạ",
+    "mã QR vị trí địa lý",
+    "mã QR khoá vị trí",
+    "geo locked QR code",
+    "mã QR sự kiện lịch",
+    "mã QR SMS nhắn tin",
+    "mã QR email soạn sẵn",
+    "mã QR Facebook",
+    "mã QR multi link",
+    "quét mã QR online camera",
+    "quét mã QR từ hình ảnh",
+    "tạo QR code không hết hạn",
+    "tùy chỉnh màu mã QR",
+    "kiểm tra tương phản QR",
     "Kaius FastQR",
-    "tạo QR code online",
-    "QR code cho doanh nghiệp",
-    "QR code generator",
-    "free QR code",
-    "professional QR generator",
-    "custom QR code",
-    "vCard QR code",
-    "WiFi QR code",
-    "location QR code",
-    "QR code with logo",
-    "business QR code",
-    "event QR code",
-    "SMS QR code",
-    "email QR code",
-    "online QR generator",
+    "free QR code generator",
+    "custom QR code maker",
+    "QR code generator with logo",
+    "wifi QR code generator",
+    "vcard QR code generator",
+    "location locked QR code",
+    "online QR scanner",
   ],
   baseUrl,
   domain,
@@ -70,4 +70,3 @@ export const buildCanonicalUrl = (path = "/") => {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`
   return new URL(normalizedPath, `${seoDefaults.baseUrl}/`).toString().replace(/\/$/, normalizedPath === "/" ? "/" : "")
 }
-

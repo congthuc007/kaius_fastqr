@@ -133,7 +133,6 @@ With current SEO implementation:
 - Page load speed
 - Mobile usability score
 - Core Web Vitals
-\`\`\`
 
 ## 📊 **Điểm SEO hiện tại của trang:**
 

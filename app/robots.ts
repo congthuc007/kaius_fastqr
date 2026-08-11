@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next"
+import { seoDefaults } from "@/lib/site-config"
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://fastqr.kaius.id.vn"
+  const baseUrl = seoDefaults.baseUrl
 
   return {
     rules: [
