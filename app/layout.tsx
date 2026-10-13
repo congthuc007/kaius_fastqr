@@ -33,7 +33,7 @@ const structuredData = {
     {
       "@type": "Organization",
       "@id": `${seoDefaults.baseUrl}/#organization`,
-      name: "Kaius",
+      name: seoDefaults.authorBrand,
       url: seoDefaults.baseUrl,
       logo: {
         "@type": "ImageObject",
@@ -47,7 +47,7 @@ const structuredData = {
       "@type": "WebApplication",
       "@id": `${seoDefaults.baseUrl}/#webapplication`,
       name: seoDefaults.siteName,
-      alternateName: "Kaius FastQR - Professional QR Generator & Scanner",
+      alternateName: `${seoDefaults.siteName} - Professional QR Generator & Scanner`,
       description: seoDefaults.description,
       inLanguage: "vi-VN",
       url: seoDefaults.baseUrl,
@@ -64,7 +64,7 @@ const structuredData = {
       },
       author: {
         "@type": "Person",
-        name: "Kaius",
+        name: seoDefaults.authorBrand,
         url: seoDefaults.githubProfile,
       },
       publisher: {
@@ -162,9 +162,9 @@ export const metadata: Metadata = {
   },
   description: seoDefaults.description,
   keywords: seoDefaults.keywords,
-  authors: [{ name: "Kaius", url: seoDefaults.githubProfile }],
-  creator: "Kaius",
-  publisher: "Kaius",
+  authors: [{ name: seoDefaults.authorBrand, url: seoDefaults.githubProfile }],
+  creator: seoDefaults.authorBrand,
+  publisher: seoDefaults.authorBrand,
   robots: {
     index: true,
     follow: true,
