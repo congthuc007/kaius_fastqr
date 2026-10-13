@@ -5,6 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![pnpm](https://img.shields.io/badge/pnpm-10.0.0-orange?style=for-the-badge&logo=pnpm)](https://pnpm.io/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-congthuc007%2Fkaius__fastqr-181717?style=for-the-badge&logo=github)](https://github.com/congthuc007/kaius_fastqr)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **Kaius FastQR** là một ứng dụng web hiện đại, chuyên nghiệp, hỗ trợ tạo và quét mã QR trực tuyến một cách nhanh chóng và an toàn. Dự án được tối ưu hóa SEO mạnh mẽ, hỗ trợ song ngữ Anh - Việt, tích hợp các tính năng tùy biến giao diện mã QR nâng cao và đặc biệt là khả năng **Xác thực Vị trí Địa lý (Geo-locking)** độc đáo.
@@ -116,6 +117,10 @@ KaiusFastQR/
 Tải mã nguồn về máy, mở thư mục dự án và thực hiện các lệnh sau:
 
 ```bash
+# Clone kho mã nguồn từ GitHub
+git clone https://github.com/congthuc007/kaius_fastqr.git
+cd kaius_fastqr
+
 # Cài đặt các thư viện phụ thuộc
 pnpm install
 
@@ -208,4 +213,4 @@ Script sẽ đọc phần dữ liệu `en`, bảo vệ các tham số dạng `{p
 Dự án được phát hành mã nguồn mở dưới giấy phép **[MIT License](LICENSE)**. Bạn có thể tự do sử dụng, học tập và tùy biến.
 
 ---
-*Phát triển bởi Nguyễn Công Thức (Kaius).*
+*Phát triển bởi [Nguyễn Công Thức (Kaius)](https://github.com/congthuc007) — Repository: [congthuc007/kaius_fastqr](https://github.com/congthuc007/kaius_fastqr).*

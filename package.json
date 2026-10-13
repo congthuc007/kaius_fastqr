@@ -6,6 +6,18 @@
   "engines": {
     "node": ">=20"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/congthuc007/kaius_fastqr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/congthuc007/kaius_fastqr/issues"
+  },
+  "homepage": "https://github.com/congthuc007/kaius_fastqr#readme",
+  "author": {
+    "name": "Nguyễn Công Thức (Kaius)",
+    "url": "https://github.com/congthuc007"
+  },
   "scripts": {
     "build": "next build",
     "build:clean": "pnpm run clean && next build",

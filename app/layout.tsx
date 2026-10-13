@@ -41,7 +41,7 @@ const structuredData = {
         width: 512,
         height: 512,
       },
-      sameAs: ["https://github.com/congthuc007"],
+      sameAs: [seoDefaults.githubProfile],
     },
     {
       "@type": "WebApplication",
@@ -55,6 +55,7 @@ const structuredData = {
       operatingSystem: "Any",
       browserRequirements: "Requires JavaScript. Requires HTML5.",
       permissions: "location",
+      codeRepository: seoDefaults.githubUrl,
       offers: {
         "@type": "Offer",
         price: "0",
@@ -64,7 +65,7 @@ const structuredData = {
       author: {
         "@type": "Person",
         name: "Kaius",
-        url: "https://github.com/congthuc007",
+        url: seoDefaults.githubProfile,
       },
       publisher: {
         "@id": `${seoDefaults.baseUrl}/#organization`,
@@ -161,7 +162,7 @@ export const metadata: Metadata = {
   },
   description: seoDefaults.description,
   keywords: seoDefaults.keywords,
-  authors: [{ name: "Kaius", url: "https://github.com/congthuc007" }],
+  authors: [{ name: "Kaius", url: seoDefaults.githubProfile }],
   creator: "Kaius",
   publisher: "Kaius",
   robots: {

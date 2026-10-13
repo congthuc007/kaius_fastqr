@@ -64,6 +64,9 @@ export const seoDefaults = {
   domain,
   canonical: `${baseUrl}`,
   ogImage: "/og-image.png",
+  githubUrl: "https://github.com/congthuc007/kaius_fastqr",
+  githubProfile: "https://github.com/congthuc007",
+  githubRepo: "congthuc007/kaius_fastqr",
 }
 
 export const buildCanonicalUrl = (path = "/") => {
