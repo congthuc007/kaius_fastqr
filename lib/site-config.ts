@@ -1,35 +1,33 @@
 /* =========================================================================
- * ⚙️ CẤU HÌNH TRUNG TÂM (CENTRAL CONFIGURATION)
- * Khi cần thay đổi thông tin dự án, tác giả hoặc GitHub, BẠN CHỈ CẦN ĐỔI BIẾN Ở ĐÂY
- * hoặc cấu hình qua các biến môi trường (.env / Vercel Environment Variables).
+ * ⚙️ CẤU HÌNH TẬP TRUNG DUY NHẤT (SINGLE CONFIG FILE)
+ * Toàn bộ thông tin GitHub, tác giả, tên trang và domain đều được định nghĩa ở đây.
+ * Khi cần thay đổi bất kỳ thông tin nào, bạn CHỈ CẦN SỬA TRỰC TIẾP TẠI FILE NÀY!
  * ========================================================================= */
 
-// 1. Cấu hình GitHub (đổi username hoặc repo tại đây)
+// 1. Cấu hình GitHub (Khi đổi tài khoản hoặc repo chỉ cần đổi 2 dòng này)
 export const GITHUB_CONFIG = {
-  username: process.env.NEXT_PUBLIC_GITHUB_USERNAME?.trim() || "congthuc007",
-  repo: process.env.NEXT_PUBLIC_GITHUB_REPO?.trim() || "kaius_fastqr",
+  username: "congthuc007",
+  repo: "kaius_fastqr",
 } as const
 
 // 2. Cấu hình Tác giả & Thương hiệu
 export const AUTHOR_CONFIG = {
-  name: process.env.NEXT_PUBLIC_AUTHOR_NAME?.trim() || "Nguyễn Công Thức (Kaius)",
-  brand: process.env.NEXT_PUBLIC_AUTHOR_BRAND?.trim() || "Kaius",
-  email: process.env.NEXT_PUBLIC_AUTHOR_EMAIL?.trim() || "thuctk04@gmail.com",
+  name: "Nguyễn Công Thức (Kaius)",
+  brand: "Kaius",
+  email: "thuctk04@gmail.com",
 } as const
 
-// 3. Cấu hình Website & Nội dung mặc định
+// 3. Cấu hình Website & Domain
 export const SITE_METADATA = {
-  name: process.env.NEXT_PUBLIC_SITE_NAME?.trim() || "Kaius FastQR",
-  tagline:
-    process.env.NEXT_PUBLIC_SITE_TAGLINE?.trim() ||
-    "Trình Tạo & Quét Mã QR Code Chuyên Nghiệp Miễn Phí",
+  name: "Kaius FastQR",
+  tagline: "Trình Tạo & Quét Mã QR Code Chuyên Nghiệp Miễn Phí",
   description:
-    process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
     "Trình tạo và quét mã QR Code chuyên nghiệp miễn phí trực tuyến. Hỗ trợ tạo mã QR URL, vCard danh bạ, WiFi, GPS vị trí khóa (Geo-lock), SMS, Email, Sự kiện, Facebook, Multi-Link. Tùy chỉnh màu sắc, chèn logo cá nhân, kiểm tra tương phản chuẩn WCAG, tải xuống ảnh chất lượng cao không bao giờ hết hạn.",
-  fallbackDomain: "fastqr.kaius.id.vn",
+  domain: "fastqr.kaius.id.vn",
+  baseUrl: "https://fastqr.kaius.id.vn",
 } as const
 
-// 4. Các đường dẫn GitHub tự động tạo từ GITHUB_CONFIG
+// 4. Các đường dẫn GitHub (tự động sinh từ GITHUB_CONFIG)
 export const githubLinks = {
   username: GITHUB_CONFIG.username,
   repo: GITHUB_CONFIG.repo,
@@ -39,40 +37,14 @@ export const githubLinks = {
   cloneUrl: `https://github.com/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}.git`,
 } as const
 
-/* =========================================================================
- * 🛠️ XỬ LÝ SANITIZE DOMAIN & BASE URL
- * ========================================================================= */
-const sanitizeDomain = (value: string) =>
-  value.replace(/^https?:\/\//i, "").replace(/\/.*$/, "").trim()
-
-const sanitizeBaseUrl = (value: string) => {
-  const trimmed = value.trim()
-  if (!trimmed) return ""
-  return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed
-}
-
-const envDomain = process.env.NEXT_PUBLIC_SITE_DOMAIN
-const domain =
-  envDomain && sanitizeDomain(envDomain).length > 0
-    ? sanitizeDomain(envDomain)
-    : SITE_METADATA.fallbackDomain
-
-const envBaseUrl = process.env.NEXT_PUBLIC_SITE_URL
-const baseUrl =
-  envBaseUrl && sanitizeBaseUrl(envBaseUrl).length > 0
-    ? sanitizeBaseUrl(envBaseUrl)
-    : `https://${domain}`
-
-const siteName = SITE_METADATA.name
-const siteTagline = SITE_METADATA.tagline
-const marketingTitle = `${siteName} - ${siteTagline}`
+const marketingTitle = `${SITE_METADATA.name} - ${SITE_METADATA.tagline}`
 
 /* =========================================================================
- * 🌐 SEO DEFAULTS EXPORT (Tương thích toàn diện với mã nguồn hiện tại)
+ * 🌐 SEO DEFAULTS EXPORT (Tương thích toàn diện với layout & page)
  * ========================================================================= */
 export const seoDefaults = {
-  siteName,
-  siteTagline,
+  siteName: SITE_METADATA.name,
+  siteTagline: SITE_METADATA.tagline,
   marketingTitle,
   description: SITE_METADATA.description,
   authorName: AUTHOR_CONFIG.name,
@@ -84,6 +56,10 @@ export const seoDefaults = {
   githubProfile: githubLinks.profileUrl,
   githubRepo: `${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}`,
   githubCloneUrl: githubLinks.cloneUrl,
+  domain: SITE_METADATA.domain,
+  baseUrl: SITE_METADATA.baseUrl,
+  canonical: SITE_METADATA.baseUrl,
+  ogImage: "/og-image.png",
   keywords: [
     "tạo mã QR",
     "tạo mã QR code online",
@@ -114,10 +90,6 @@ export const seoDefaults = {
     "location locked QR code",
     "online QR scanner",
   ],
-  baseUrl,
-  domain,
-  canonical: `${baseUrl}`,
-  ogImage: "/og-image.png",
 }
 
 export const siteConfig = {
